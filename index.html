@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Optimization -->
+  <title>Spendly — Your Budget Companion</title>
+  <meta name="description"
+    content="Spendly is a premium, student-focused expense tracker. Quickly record expenses, manage YNAB-inspired budgets, organization fixed commitments, and secure backups completely privately.">
+  <meta name="author" content="Spendly Team">
+  <meta name="theme-color" content="#070a13">
+
+  <link rel="stylesheet" href="css/style.css?v=20260602">
+</head>
+
+<body>
+
+  <!-- Futuristic Glowing Radial Background Blobs -->
+  <div class="radial-blur-glow" style="top: -100px; left: -100px;"></div>
+  <div class="radial-blur-glow"
+    style="bottom: -150px; right: -150px; background: radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%);">
+  </div>
+
+  <!-- =============================================================
+       PHASE 1: ONBOARDING STEPPER SLIDER (NO INSTALLED NODES)
+       ============================================================= -->
+  <main class="onboarding-container" id="onboardingContainer">
+    <div class="onboarding-card glass-panel animate-fadeIn">
+
+      <!-- Stepper Progress Bar Lines -->
+      <div class="onboarding-stepper-progress" id="obProgress">
+        <div class="step-indicator active"></div>
+        <div class="step-indicator"></div>
+        <div class="step-indicator"></div>
+        <div class="step-indicator"></div>
+        <div class="step-indicator"></div>
+      </div>
+
+      <!-- Slides Viewport Container -->
+      <div class="onboarding-slider-viewport">
+        <div class="onboarding-track" id="onboardingTrack">
+
+          <!-- Slide 1: Welcome Screen -->
+          <div class="onboarding-slide active" id="slide-1">
+            <div class="logo-container">
+              <div class="logo-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                </svg>
+              </div>
+              <h1 class="logo-text">Spendly</h1>
+            </div>
+            <p class="tagline">"Track less. Understand more."</p>
+            <div class="slide-desc text-center" style="max-width: 340px; margin: 0 auto 30px auto;">
+              Your high-end budgeting companion. Secure, local-first sandbox tracking with zero configuration overhead.
+              Ready in seconds.
+            </div>
+            <div class="btn-group">
+              <button class="primary-btn" id="obStartBtn" type="button">
+                Get Started!
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2"
+                  stroke="currentColor" style="width: 18px; height: 18px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Slide 2: Country/Currency & Occupation Settings -->
+          <div class="onboarding-slide" id="slide-2">
+            <div>
+              <h2 class="slide-title text-zinc-100">Select Region & Profile</h2>
+              <p class="slide-desc">Choose your default currency and select your current occupation to calibrate
+                spending goal suggestions.</p>
+
+              <!-- User Name input -->
+              <div class="mb-4" style="margin-bottom: 16px; text-align: left;">
+                <label class="input-label-tag" for="obUserName">Your Name</label>
+                <div class="st-input-wrapper" style="margin-bottom: 0;">
+                  <i data-lucide="user" class="st-input-icon"></i>
+                  <input class="st-input-box" id="obUserName" type="text" placeholder="Enter your name..."
+                    style="padding-left: 42px; border-radius: 14px; font-size: 13px; height: 42px;" value="Shekhar">
+                </div>
+              </div>
+
+              <!-- Currency select grid -->
+              <span class="input-label-tag" style="margin-bottom: 8px;">Country / Currency</span>
+              <div class="grid grid-cols-4 gap-2 mb-5 select-none" id="obCurrencyGrid"
+                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;">
+                <button type="button" class="numpad-cat-btn selected" data-currency="₹" data-name="INR">
+                  <span class="text-lg font-extrabold">₹</span>
+                  <span class="text-[8px] font-bold mt-1">India</span>
+                </button>
+                <button type="button" class="numpad-cat-btn" data-currency="$" data-name="USD">
+                  <span class="text-lg font-extrabold">$</span>
+                  <span class="text-[8px] font-bold mt-1">USA</span>
+                </button>
+                <button type="button" class="numpad-cat-btn" data-currency="£" data-name="GBP">
+                  <span class="text-lg font-extrabold">£</span>
+                  <span class="text-[8px] font-bold mt-1">UK</span>
+                </button>
+                <button type="button" class="numpad-cat-btn" data-currency="€" data-name="EUR">
+                  <span class="text-lg font-extrabold">€</span>
+                  <span class="text-[8px] font-bold mt-1">Europe</span>
+                </button>
+              </div>
+
+              <!-- Occupation select grid -->
+              <span class="input-label-tag" style="margin-bottom: 8px;">Occupation Status</span>
+              <div class="grid grid-cols-2 gap-3 mb-4 select-none" id="obOccupationGrid"
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
+                <button type="button" class="numpad-cat-btn selected p-3 flex flex-row gap-3 items-center justify-start"
+                  data-occupation="Student"
+                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+                  <i data-lucide="education" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="font-extrabold text-xs">Student</span>
+                </button>
+                <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
+                  data-occupation="Working"
+                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+                  <i data-lucide="tag" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="font-extrabold text-xs">Earning</span>
+                </button>
+                <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
+                  data-occupation="Freelancer"
+                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+                  <i data-lucide="compass" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="font-extrabold text-xs">Freelancer</span>
+                </button>
+                <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
+                  data-occupation="Other"
+                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+                  <i data-lucide="wallet" class="w-5 h-5 flex-shrink-0"></i>
+                  <span class="font-extrabold text-xs">Other</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button class="secondary-btn ob-prev-btn" type="button">Back</button>
+              <button class="primary-btn ob-next-btn" type="button">Continue</button>
+            </div>
+          </div>
+
+          <!-- Slide 3: Inflow Setup -->
+          <!-- Slide 3: Lifestyle & Profile Parameters Form -->
+          <div class="onboarding-slide" id="slide-3" style="max-height: 480px; overflow-y: auto; padding-right: 8px;">
+            <div>
+              <h2 class="slide-title text-zinc-100">Lifestyle & Profile Calibrator</h2>
+              <p class="slide-desc">Fill out your monthly estimates. We will dynamically configure your YNAB allowances
+                and categories.</p>
+
+              <!-- Student Profile Form Fields -->
+              <div id="obStudentProfileForm" class="profile-conditional-form animate-fadeIn"
+                style="display: none; text-align: left; gap: 12px; flex-direction: column;">
+                <!-- Monthly Inflow Stipend -->
+                <div class="mb-3">
+                  <label class="input-label-tag" for="obStudentInflow">Monthly Stipend / Inflow (<span
+                      class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obStudentInflow" type="number" min="0" value="3000"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+
+                <!-- Living status PG/Hostel/Home -->
+                <div class="mb-3">
+                  <label class="input-label-tag" style="margin-bottom: 6px;">Living Arrangement</label>
+                  <div class="grid grid-cols-3 gap-2" id="obLivingArrangementGrid"
+                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                    <button type="button" class="numpad-cat-btn selected" data-status="PG"
+                      style="padding: 8px 4px; font-size: 11px; font-weight: 700;">PG</button>
+                    <button type="button" class="numpad-cat-btn" data-status="Hostel"
+                      style="padding: 8px 4px; font-size: 11px; font-weight: 700;">Hostel</button>
+                    <button type="button" class="numpad-cat-btn" data-status="Home"
+                      style="padding: 8px 4px; font-size: 11px; font-weight: 700;">Home</button>
+                  </div>
+                </div>
+
+                <!-- Rent / Hostel fees -->
+                <div class="mb-3" id="obStudentRentWrapper">
+                  <label class="input-label-tag" for="obStudentRent">Monthly Rent / Hostel Fees (<span
+                      class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obStudentRent" type="number" min="0" value="1200"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+
+                <!-- Estimations -->
+                <div class="grid grid-cols-2 gap-3"
+                  style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+                  <div>
+                    <label class="input-label-tag" for="obStudentFood">Food Spends (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obStudentFood" type="number" min="0" value="600"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obStudentTransport">Transport Spends (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obStudentTransport" type="number" min="0" value="200"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obStudentStationery">Stationery Spends (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obStudentStationery" type="number" min="0" value="150"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obStudentEducation">Education Spends (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obStudentEducation" type="number" min="0" value="400"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                </div>
+
+                <div class="mb-2">
+                  <label class="input-label-tag" for="obStudentMisc">Miscellaneous Spending (<span
+                      class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obStudentMisc" type="number" min="0" value="200"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+              </div>
+
+              <!-- Working Professional Profile Form Fields -->
+              <div id="obWorkingProfileForm" class="profile-conditional-form animate-fadeIn"
+                style="display: none; text-align: left; gap: 12px; flex-direction: column;">
+                <div class="mb-2">
+                  <label class="input-label-tag" for="obWorkingInflow">Monthly Salary / Inflow (<span
+                      class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obWorkingInflow" type="number" min="0" value="50000"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3"
+                  style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+                  <div>
+                    <label class="input-label-tag" for="obWorkingRent">Monthly Rent / Housing (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obWorkingRent" type="number" min="0" value="15000"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obWorkingUtilities">Utilities (Bills/Power) (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obWorkingUtilities" type="number" min="0" value="4000"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obWorkingTransport">Transportation (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obWorkingTransport" type="number" min="0" value="3000"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obWorkingGroceries">Groceries / Food (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obWorkingGroceries" type="number" min="0" value="8000"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obWorkingSavings">Savings Goal Target (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obWorkingSavings" type="number" min="0" value="12000"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obWorkingEMI">EMI / Loan Payments (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obWorkingEMI" type="number" min="0" value="5000"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                </div>
+
+                <div class="mb-2">
+                  <label class="input-label-tag" for="obWorkingOther">Other Recurring Spends (<span
+                      class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obWorkingOther" type="number" min="0" value="3000"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 15px;">
+              <button class="secondary-btn ob-prev-btn" type="button">Back</button>
+              <button class="primary-btn ob-next-btn" type="button">Continue</button>
+            </div>
+          </div>
+
+          <!-- Slide 4: Fixed Expenses Manager -->
+          <div class="onboarding-slide" id="slide-4">
+            <div>
+              <h2 class="slide-title text-zinc-100">Identify Fixed Commitments</h2>
+              <p class="slide-desc">Input your fixed expenses. Specify the commitment name, amount, and recurrence
+                frequency (Monthly/Weekly or One-time) to isolate your daily allowances.</p>
+
+              <!-- Column labels headers -->
+              <div class="fixed-bills-headers animate-fadeIn"
+                style="display: grid; grid-template-columns: 1.4fr 1fr 1.4fr 40px; gap: 8px; padding: 0 10px; margin-bottom: 8px; font-size: 9px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">
+                <span>Commitment Name</span>
+                <span>Amount</span>
+                <span>Payment Freq</span>
+                <span></span>
+              </div>
+
+              <div class="fixed-bills-list" id="obFixedExpensesList">
+                <!-- Injected dynamically by app.js -->
+              </div>
+
+              <button class="add-bill-btn animate-fadeIn" id="obAddBillBtn" type="button">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Fixed Commitment
+              </button>
+            </div>
+
+            <div class="btn-group" style="margin-top: 15px;">
+              <button class="secondary-btn ob-prev-btn" type="button">Back</button>
+              <button class="primary-btn ob-next-btn" type="button">Continue</button>
+            </div>
+          </div>
+
+          <!-- Slide 5: Budget Goal Suggestions -->
+          <div class="onboarding-slide" id="slide-5">
+            <div>
+              <h2 class="slide-title text-zinc-100">Student Target Goals</h2>
+              <p class="slide-desc">YNAB-inspired remaining spend indexes. We suggest allocating 70% as spendable
+                allowances, saving the rest.</p>
+
+              <div class="budget-summary-card">
+                <div class="summary-stat-row">
+                  <span class="summary-stat-label">Monthly stipend inflow:</span>
+                  <span class="summary-stat-val text-zinc-200" id="obSummaryIncome">₹3,000</span>
+                </div>
+                <div class="summary-stat-row">
+                  <span class="summary-stat-label">Fixed obligations debit:</span>
+                  <span class="summary-stat-val text-zinc-200" id="obSummaryBills">₹1,305</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 6px 0;">
+                <div class="summary-stat-row" style="color: var(--accent-secondary);">
+                  <span class="summary-stat-label" style="font-weight: 700;">Remaining Disposable:</span>
+                  <span class="summary-stat-val" id="obSummaryDisposable" style="font-weight: 800;">₹1,695</span>
+                </div>
+              </div>
+
+              <div class="suggested-badge-container">
+                <div class="budget-tier-card selected" id="obDailyCard">
+                  <div class="budget-tier-title">Daily Suggested</div>
+                  <div class="budget-tier-amount" id="obDailyAmount">₹39</div>
+                  <div class="budget-tier-subtitle">70% spendable caps</div>
+                </div>
+                <div class="budget-tier-card" id="obWeeklyCard">
+                  <div class="budget-tier-title">Weekly Suggested</div>
+                  <div class="budget-tier-amount" id="obWeeklyAmount">₹276</div>
+                  <div class="budget-tier-subtitle">70% spendable caps</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 15px;">
+              <button class="secondary-btn ob-prev-btn" type="button">Back</button>
+              <button class="primary-btn" id="obCompleteOnboardingBtn" type="button">Looks Perfect</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- =============================================================
+       PHASE 2: INTERACTIVE SPENDEE-INSPIRED DASHBOARD VIEW
+       ============================================================= -->
+  <div class="dashboard-container" id="dashboardContainer">
+
+    <!-- Navbar Header -->
+    <header class="navbar">
+      <div class="nav-brand" id="navBrand" style="cursor: pointer;">
+        <div class="nav-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="nav-title text-zinc-100 font-extrabold select-none">Spendly</h2>
+          <span class="nav-tagline" id="navBrandGreeting">"Track less. Understand more."</span>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <select class="nav-month-select" id="dashMonthFilter" title="Select active month to analyze historical spending"
+          style="background: rgba(17, 24, 39, 0.65); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; margin-right: 8px; font-family: var(--font-family);">
+          <!-- Populate dynamically in app.js -->
+        </select>
+        <span class="nav-badge" id="cloudStatusBadge">
+          <i data-lucide="shield" class="w-3.5 h-3.5 mr-1 text-indigo-400"></i>
+          Dorm local mode
+        </span>
+        <button class="circle-btn" id="themeToggleBtn" type="button" aria-label="Toggle Theme">
+          <i data-lucide="sun" class="w-5 h-5"></i>
+        </button>
+        <button class="circle-btn" id="settingsBtn" type="button" aria-label="Settings">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+        <button class="circle-btn" id="logoutBtn" type="button" aria-label="Logout" style="color: #f43f5e !important;">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid Dashboard layout -->
+    <main class="dashboard-grid">
+
+      <!-- Statistics Stat Cards Grid col 12 -->
+      <section class="stats-container">
+
+        <!-- Metric Card 1: Disposable Balance -->
+        <div class="stat-card glass-panel group hover:-translate-y-0.5 transition-all duration-200">
+          <div class="stat-header">
+            <span class="stat-label">Disposable Balance</span>
+            <div class="stat-icon"><i data-lucide="wallet" class="w-4 h-4"></i></div>
+          </div>
+          <div class="stat-value text-zinc-100" id="dashTotalBalance">₹0</div>
+          <span class="stat-subtext">Remaining stipends this month</span>
+        </div>
+
+        <!-- Metric Card 2: Income credit -->
+        <div class="stat-card glass-panel income hover:-translate-y-0.5 transition-all duration-200">
+          <div class="stat-header">
+            <span class="stat-label">Monthly Inflow</span>
+            <div class="stat-icon"><i data-lucide="arrow-down-left" class="w-4 h-4"></i></div>
+          </div>
+          <div class="stat-value text-zinc-100" id="dashTotalIncome">₹0</div>
+          <span class="stat-subtext">Registered stipends limit</span>
+        </div>
+
+        <!-- Metric Card 3: Outflows spent -->
+        <div class="stat-card glass-panel expenses hover:-translate-y-0.5 transition-all duration-200">
+          <div class="stat-header">
+            <span class="stat-label">Total Outflow</span>
+            <div class="stat-icon"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
+          </div>
+          <div class="stat-value text-zinc-100" id="dashTotalExpenses">₹0</div>
+          <span class="stat-subtext">Expenses logged this month</span>
+        </div>
+
+        <!-- Metric Card 4: Daily allowance progress -->
+        <div class="stat-card glass-panel hover:-translate-y-0.5 transition-all duration-200">
+          <div class="stat-header">
+            <span class="stat-label" id="budgetMetricLabel">Daily Budget</span>
+            <div class="stat-icon"><i data-lucide="compass" class="w-4 h-4"></i></div>
+          </div>
+          <div class="stat-value text-zinc-100" id="dashBudgetVal">₹0</div>
+          <div class="budget-progress-container">
+            <div class="progress-label-row">
+              <span id="budgetSpentText">₹0 spent</span>
+              <span>limit caps</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="budgetProgressFill"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Predictive Coach Alerts Banner Container -->
+      <div id="predictiveAlertsBanner" style="grid-column: span 12; width: 100%;">
+        <!-- Injected dynamically by app.js -->
+      </div>
+
+      <!-- Grid col 12 Tabs control list -->
+      <nav class="dashboard-tabs-bar">
+        <button class="tab-btn active" data-tab="analytics" type="button">
+          <i data-lucide="logo" class="w-4 h-4"></i>
+          Dashboard View
+        </button>
+        <button class="tab-btn" data-tab="ledger" type="button">
+          <i data-lucide="wallet" class="w-4 h-4"></i>
+          Transaction Ledger
+        </button>
+        <button class="tab-btn" data-tab="insights" type="button">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          Smart Insights
+        </button>
+        <button class="tab-btn" data-tab="budgets" type="button">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          Category Planner
+        </button>
+      </nav>
+
+      <!-- Main Columns view Grid splits (Col 8, Col 4) -->
+      <section class="main-tab-panel">
+
+        <!-- Tab panel 1: Dashboard Analytics -->
+        <div class="dashboard-charts-subgrid animate-fadeIn" id="tab-panel-analytics">
+
+          <!-- Line trend SVG chart card -->
+          <article class="card-chart-large glass-panel hover:scale-[1.005] duration-300">
+            <div class="chart-header-row">
+              <div>
+                <h3 class="chart-title text-zinc-100">Daily Cashflow Trend</h3>
+                <span class="text-[10px] text-zinc-500 font-semibold block">7-day active comparatives</span>
+              </div>
+              <div style="display: flex; gap: 14px; align-items: center; user-select: none;">
+                <span
+                  style="font-size: 10px; font-weight: 800; color: #10b981; display: inline-flex; align-items: center; gap: 6px;">
+                  <span
+                    style="width: 7px; height: 7px; border-radius: 50%; background-color: #10b981; display: inline-block; box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);"></span>
+                  Inflow
+                </span>
+                <span
+                  style="font-size: 10px; font-weight: 800; color: #f43f5e; display: inline-flex; align-items: center; gap: 6px;">
+                  <span
+                    style="width: 7px; height: 7px; border-radius: 50%; background-color: #f43f5e; display: inline-block; box-shadow: 0 0 6px rgba(244, 63, 94, 0.4);"></span>
+                  Outflow
+                </span>
+              </div>
+            </div>
+            <div class="chart-canvas-container" id="trendLineChartContainer">
+              <!-- Animated SVG path injected dynamically by app.js -->
+            </div>
+          </article>
+
+          <!-- Small charts two cols grid -->
+          <div class="analytics-grid-two-cols">
+
+            <!-- Category Donut SVG chart card -->
+            <article class="card-chart-half glass-panel hover:scale-[1.008] duration-300">
+              <div class="chart-header-row">
+                <div>
+                  <h3 class="chart-title text-zinc-100">Expenditure Breakdown</h3>
+                  <span class="text-[10px] text-zinc-500 font-semibold block">Monthly category ratio</span>
+                </div>
+              </div>
+              <div class="chart-canvas-container" id="categoryDonutChartContainer">
+                <!-- SVG Circle elements slices injected by app.js -->
+              </div>
+            </article>
+
+            <!-- Weekday columns SVG card -->
+            <article class="card-chart-half glass-panel hover:scale-[1.008] duration-300">
+              <div class="chart-header-row">
+                <div>
+                  <h3 class="chart-title text-zinc-100">Weekday Averages</h3>
+                  <span class="text-[10px] text-zinc-500 font-semibold block">Spending trend columns</span>
+                </div>
+              </div>
+              <div class="chart-canvas-container" id="trendBarChartCanvasContainer"
+                style="display: flex; flex-direction: column;">
+                <!-- Replaced by beautiful SVG bar chart columns in drawTrendLineSvg or CustomCharts bar rendering -->
+                <div class="w-full flex-1" id="trendBarChartContainer" style="height: 100%;">
+                  <!-- Placeholder SVG bar renderer dynamically drawn inside or custom render bars -->
+                  <div class="flex items-end justify-between h-[120px] px-4 relative mt-4">
+                    <div class="flex-1 flex flex-col items-center group cursor-pointer relative">
+                      <div class="w-full bg-zinc-800 rounded-t-lg h-[90px] flex items-end overflow-hidden">
+                        <div
+                          class="w-full rounded-t-md bg-gradient-to-t from-zinc-700 to-zinc-600 group-hover:from-indigo-500 group-hover:to-indigo-400 group-hover:shadow-[0_0_10px_var(--accent-glow)] transition-all"
+                          style="height: 55%;"></div>
+                      </div>
+                      <span class="text-[8px] font-bold text-zinc-500 mt-2">Mon</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center group cursor-pointer relative">
+                      <div class="w-full bg-zinc-800 rounded-t-lg h-[90px] flex items-end overflow-hidden">
+                        <div
+                          class="w-full rounded-t-md bg-gradient-to-t from-zinc-700 to-zinc-600 group-hover:from-indigo-500 group-hover:to-indigo-400 group-hover:shadow-[0_0_10px_var(--accent-glow)] transition-all"
+                          style="height: 75%;"></div>
+                      </div>
+                      <span class="text-[8px] font-bold text-zinc-500 mt-2">Tue</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center group cursor-pointer relative">
+                      <div class="w-full bg-zinc-800 rounded-t-lg h-[90px] flex items-end overflow-hidden">
+                        <div
+                          class="w-full rounded-t-md bg-gradient-to-t from-indigo-600 to-indigo-400 shadow-[0_0_10px_var(--accent-glow)] transition-all"
+                          style="height: 92%;"></div>
+                      </div>
+                      <span class="text-[8px] font-bold text-zinc-500 mt-2 select-none"
+                        style="color: var(--accent-primary);">Wed</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center group cursor-pointer relative">
+                      <div class="w-full bg-zinc-800 rounded-t-lg h-[90px] flex items-end overflow-hidden">
+                        <div
+                          class="w-full rounded-t-md bg-gradient-to-t from-zinc-700 to-zinc-600 group-hover:from-indigo-500 group-hover:to-indigo-400 group-hover:shadow-[0_0_10px_var(--accent-glow)] transition-all"
+                          style="height: 40%;"></div>
+                      </div>
+                      <span class="text-[8px] font-bold text-zinc-500 mt-2">Thu</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center group cursor-pointer relative">
+                      <div class="w-full bg-zinc-800 rounded-t-lg h-[90px] flex items-end overflow-hidden">
+                        <div
+                          class="w-full rounded-t-md bg-gradient-to-t from-zinc-700 to-zinc-600 group-hover:from-indigo-500 group-hover:to-indigo-400 group-hover:shadow-[0_0_10px_var(--accent-glow)] transition-all"
+                          style="height: 60%;"></div>
+                      </div>
+                      <span class="text-[8px] font-bold text-zinc-500 mt-2">Fri</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+          </div>
+
+        </div>
+
+        <!-- Tab panel 2: Transaction Ledger List -->
+        <div class="ledger-tab-panel glass-panel animate-fadeIn" id="tab-panel-ledger" style="display: none;">
+          <div>
+            <div class="chart-header-row" style="margin-bottom: 5px;">
+              <h3 class="chart-title text-zinc-100">Receipts Ledger</h3>
+              <span class="text-[10px] text-zinc-500 font-semibold block">Ledger details</span>
+            </div>
+
+            <!-- Ledger filters inputs -->
+            <div class="transactions-filter-bar mb-4">
+              <div class="search-bar">
+                <i data-lucide="search"></i>
+                <input class="search-input" id="searchInput" type="text"
+                  placeholder="Search description, shop item, memo notes...">
+              </div>
+              <select class="select-filter" id="categoryFilter">
+                <option value="all">All Categories</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Education">Education</option>
+                <option value="Health">Health</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="ledger-log-scroll-box" id="transactionsLogContainer">
+              <!-- Injected dynamically by app.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab panel 3: Personalized AI Coach Hub -->
+        <div class="insights-tab-panel animate-fadeIn" id="tab-panel-insights" style="display: none;">
+          <div class="coach-hub-grid" style="display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%;">
+
+            <!-- Weekly Financial Review Card -->
+            <div class="glass-panel p-6 coach-card"
+              style="padding: 20px; border-radius: 24px; display: flex; flex-direction: column;">
+              <div class="coach-header-row"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 class="chart-title text-zinc-100">Weekly Financial Review</h3>
+                  <span class="text-[10px] text-zinc-500 font-semibold block">Weekly report breakdown & analysis</span>
+                </div>
+              </div>
+              <div id="weeklyReviewContainer">
+                <!-- Injected dynamically by app.js: Spends breakdown, necessary vs avoidable spending answers -->
+              </div>
+            </div>
+
+            <!-- Essential vs Non-Essential Spending Analysis -->
+            <div class="glass-panel p-6 coach-card"
+              style="padding: 20px; border-radius: 24px; display: flex; flex-direction: column;">
+              <div class="coach-header-row"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 class="chart-title text-zinc-100">Essential vs Non-Essential Spends</h3>
+                  <span class="text-[10px] text-zinc-500 font-semibold block">Discretionary vs necessary balance
+                    analysis</span>
+                </div>
+              </div>
+              <div id="essentialSpendingContainer">
+                <!-- Injected dynamically by app.js: dual bar progress meters and custom coach recommendations -->
+              </div>
+            </div>
+
+            <!-- Historical Comparison & Spends Forecast -->
+            <div class="glass-panel p-6 coach-card"
+              style="padding: 20px; border-radius: 24px; display: flex; flex-direction: column;">
+              <div class="coach-header-row"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 class="chart-title text-zinc-100">AI Coach Spends Forecast</h3>
+                  <span class="text-[10px] text-zinc-500 font-semibold block">Predictive alerts & historical
+                    comparisons</span>
+                </div>
+              </div>
+              <div id="coachForecastContainer">
+                <!-- Injected dynamically by app.js: monthly forecast alerts and historical columns comparison -->
+              </div>
+            </div>
+
+            <!-- Standard Advisory Warnings -->
+            <div class="glass-panel p-6 coach-card"
+              style="padding: 20px; border-radius: 24px; display: flex; flex-direction: column;">
+              <div class="chart-header-row"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 class="chart-title text-zinc-100">Smart Financial Habits</h3>
+                  <span class="text-[10px] text-zinc-500 font-semibold block">Gamified advisory warnings</span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3" id="insightsListContainer">
+                <!-- Dynamic alert cards injected by app.js rules engine -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab panel 4: YNAB Category Budgets -->
+        <div class="category-budgets-panel animate-fadeIn" id="tab-panel-budgets" style="display: none;">
+          <div class="glass-panel">
+            <div class="chart-header-row mb-6">
+              <div>
+                <h3 class="chart-title text-zinc-100">YNAB Category Limits</h3>
+                <span class="text-[10px] text-zinc-500 font-semibold block">Edit maximum spending thresholds</span>
+              </div>
+            </div>
+            <div class="cat-budgets-grid" id="catBudgetsGrid">
+              <!-- Injected by app.js -->
+            </div>
+          </div>
+
+      </section>
+
+      <!-- Sidebar checklist column (Col 4) -->
+      <section class="right-sidebar-panel">
+
+        <!-- Dynamic Glass Profile Card -->
+        <article class="profile-sidebar-card glass-panel hover:scale-[1.005] duration-300" id="sidebarProfileCard"
+          style="margin-bottom: 20px; display: none;">
+          <!-- Injected dynamically by app.js based on selected occupation -->
+        </article>
+
+        <!-- Fixed bills calendar checklist -->
+        <article class="bills-tracker-sidebar glass-panel hover:scale-[1.005] duration-300">
+          <div class="chart-header-row mb-4">
+            <div>
+              <h3 class="chart-title text-zinc-100">Fixed Commitments Calendar</h3>
+              <span class="text-[10px] text-zinc-500 font-semibold block">Monthly checklist</span>
+            </div>
+          </div>
+          <div class="bills-scroll-box animate-fadeIn" id="billsListContainer">
+            <!-- Toggles checkbox pay lists injected by app.js -->
+          </div>
+
+          <!-- Quick Add Commitment Button -->
+          <button class="add-commitment-trigger-btn" id="sidebarAddCommitmentBtn" type="button">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            Add Custom Commitment
+          </button>
+
+          <!-- Inline Form for adding new commitments -->
+          <div class="add-commitment-inline-form animate-fadeIn" id="sidebarAddCommitmentForm" style="display: none;">
+            <h4 class="sidebar-form-title">New Fixed Commitment</h4>
+            <div class="flex flex-col gap-2" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Name Input -->
+              <input type="text" id="addCommitmentName" class="sidebar-input-field"
+                placeholder="e.g. Phone, gym, subscription...">
+
+              <!-- Amount & Freq Row -->
+              <div class="flex gap-2" style="display: flex; gap: 8px;">
+                <div style="position: relative; flex: 1;">
+                  <span
+                    style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-muted); font-weight: bold;"
+                    id="addCommitmentCurrencySymbol">₹</span>
+                  <input type="number" id="addCommitmentAmount" class="sidebar-input-field" placeholder="Amount"
+                    style="padding-left: 22px;">
+                </div>
+                <select id="addCommitmentFreq" class="sidebar-select-field" style="flex: 1;">
+                  <option value="monthly">Monthly</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="once">One-Time</option>
+                </select>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex gap-2 justify-end"
+                style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px;">
+                <button type="button" class="sidebar-btn btn-cancel" id="cancelCommitmentFormBtn">Cancel</button>
+                <button type="button" class="sidebar-btn btn-add" id="saveCommitmentFormBtn">Add</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Recurring payments progress chart card -->
+        <article class="recurring-progress-card glass-panel hover:scale-[1.005] duration-300"
+          id="sidebarRecurringChartCard" style="margin-top: 20px;">
+          <div class="chart-header-row" style="margin-bottom: 12px;">
+            <div>
+              <h3 class="chart-title text-zinc-100">Recurring Payments Track</h3>
+              <span class="text-[10px] text-zinc-500 font-semibold block">Paid vs. Outstanding commitments</span>
+            </div>
+          </div>
+          <div id="recurringChartContainer"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px;">
+            <!-- SVG injected dynamically by app.js -->
+          </div>
+        </article>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =============================================================
+       PHASE 3: MONEFY DRAWER NUMERICAL ENTRY PAD
+       ============================================================= -->
+  <button class="fab-glowing-trigger" id="floatingAddBtn" type="button" aria-label="Log new entry">
+    <i data-lucide="plus"></i>
+  </button>
+
+  <!-- Overlay backdrop -->
+  <div class="numpad-drawer-overlay" id="numpadDrawerOverlay"></div>
+
+  <!-- Drawer Sidebar panel -->
+  <aside class="numpad-drawer-panel" id="numpadDrawerPanel">
+    <div class="flex justify-between items-center pb-4 border-b border-zinc-800/60 mb-5">
+      <h3 class="text-base font-extrabold text-white tracking-tight">Log Cash Transaction</h3>
+    </div>
+
+    <!-- Toggle Expense vs Income -->
+    <div class="flex bg-zinc-900 border border-zinc-800 rounded-xl p-0.5 mb-4 select-none">
+      <button class="flex-1 py-2 text-center text-[10px] font-extrabold rounded-lg uppercase" id="numpadTypeExpense"
+        type="button">Expense</button>
+      <button class="flex-1 py-2 text-center text-[10px] font-extrabold rounded-lg uppercase" id="numpadTypeIncome"
+        type="button">Income</button>
+    </div>
+
+    <!-- Amount Viewer display -->
+    <div class="numpad-amount-viewer select-all">
+      <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Entry Allowance Value</span>
+      <div class="numpad-amount-val text-rose-500 mt-1" id="numpadAmountValContainer">
+        <span>₹</span>
+        <span id="numpadAmountVal">0</span>
+      </div>
+    </div>
+
+    <!-- Visual Category Selector grid (Monefy grid) -->
+    <div class="mb-4">
+      <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider block mb-2">Tap Category</span>
+      <div class="numpad-category-grid" id="numpadCategorySelectorGrid">
+        <button class="numpad-cat-btn selected" data-category="Food" type="button">
+          <i data-lucide="food"></i>
+          <span class="numpad-cat-label">Food</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Transport" type="button">
+          <i data-lucide="transport"></i>
+          <span class="numpad-cat-label">Transport</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Shopping" type="button">
+          <i data-lucide="shopping"></i>
+          <span class="numpad-cat-label">Shopping</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Entertainment" type="button">
+          <i data-lucide="entertainment"></i>
+          <span class="numpad-cat-label">Play</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Education" type="button">
+          <i data-lucide="education"></i>
+          <span class="numpad-cat-label">Edu</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Health" type="button">
+          <i data-lucide="health"></i>
+          <span class="numpad-cat-label">Health</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Bills" type="button">
+          <i data-lucide="bills"></i>
+          <span class="numpad-cat-label">Bills</span>
+        </button>
+        <button class="numpad-cat-btn" data-category="Other" type="button">
+          <i data-lucide="tag"></i>
+          <span class="numpad-cat-label">Other</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Extra inputs fields -->
+    <div class="flex gap-2.5 mb-4 select-none">
+      <div style="flex: 1.2;">
+        <label class="input-label-tag" for="numpadTitle">Description (Shop/Item)</label>
+        <input class="st-input-box font-semibold" id="numpadTitle" type="text" placeholder="Starbucks, Metrorail..."
+          style="padding-left: 12px; border-radius: 12px; font-size: 12px; height: 38px;">
+      </div>
+      <div style="flex: 0.8;">
+        <label class="input-label-tag" for="numpadDate">Receipt Date</label>
+        <input class="st-input-box font-semibold" id="numpadDate" type="date"
+          style="padding-left: 12px; border-radius: 12px; font-size: 11px; height: 38px;">
+      </div>
+    </div>
+
+    <!-- Payment Method & Detailed Note -->
+    <div class="flex gap-2.5 mb-4 select-none" style="display: flex; gap: 10px;">
+      <div style="flex: 0.8;">
+        <label class="input-label-tag" for="numpadPayMethod">Pay Method</label>
+        <select class="st-input-box font-semibold" id="numpadPayMethod"
+          style="padding-left: 12px; border-radius: 12px; font-size: 11px; height: 38px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>&quot;); background-repeat: no-repeat; background-position: right 8px center; background-size: 10px; padding-right: 24px;">
+          <option value="Card">💳 Card</option>
+          <option value="Cash">💵 Cash</option>
+          <option value="UPI">📱 UPI</option>
+          <option value="Bank">🏛️ Bank</option>
+        </select>
+      </div>
+      <div style="flex: 1.2;">
+        <label class="input-label-tag" for="numpadNote">Note / Memo</label>
+        <input class="st-input-box font-semibold" id="numpadNote" type="text" placeholder="Coffee with Shekhar, etc..."
+          style="padding-left: 12px; border-radius: 12px; font-size: 11px; height: 38px;">
+      </div>
+    </div>
+
+    <!-- Keyboard Pad overlay -->
+    <div class="numpad-keyboard-grid">
+      <button class="numpad-key numpad-key-num" type="button">1</button>
+      <button class="numpad-key numpad-key-num" type="button">2</button>
+      <button class="numpad-key numpad-key-num" type="button">3</button>
+
+      <button class="numpad-key numpad-key-num" type="button">4</button>
+      <button class="numpad-key numpad-key-num" type="button">5</button>
+      <button class="numpad-key numpad-key-num" type="button">6</button>
+
+      <button class="numpad-key numpad-key-num" type="button">7</button>
+      <button class="numpad-key numpad-key-num" type="button">8</button>
+      <button class="numpad-key numpad-key-num" type="button">9</button>
+
+      <button class="numpad-key text-zinc-500" id="numpadKeyClear" type="button">C</button>
+      <button class="numpad-key numpad-key-num" type="button">0</button>
+      <button class="numpad-key text-zinc-550 flex items-center justify-center" id="numpadKeyBackspace"
+        type="button">⌫</button>
+    </div>
+
+    <!-- steppers buttons drawer -->
+    <div class="btn-group select-none" style="margin-top: auto;">
+      <button class="secondary-btn" id="numpadCancelBtn" type="button"
+        style="border-radius: 14px; padding: 12px 16px; font-size: 13px;">Cancel</button>
+      <button class="primary-btn" id="numpadSubmitBtn" type="button"
+        style="border-radius: 14px; padding: 12px 16px; font-size: 13px;">Confirm Entry</button>
+    </div>
+
+  </aside>
+
+
+  <!-- =============================================================
+       PHASE 4: CONFIGURATION SETTINGS MODAL OVERLAY
+       ============================================================= -->
+  <div class="modal-overlay-backdrop" id="settingsModalOverlay">
+    <div class="settings-modal-card glass-panel select-none relative animate-fadeIn">
+
+      <!-- Top Close X Button -->
+      <button class="settings-close-x-btn" id="closeSettingsXBtn" type="button" aria-label="Close Settings">
+        <i data-lucide="x"></i>
+      </button>
+
+      <h3 class="settings-modal-title text-zinc-100">Montra Sandbox Settings</h3>
+      <p class="settings-modal-subtitle">Calibrate currency, occupation budgets, and database backups.</p>
+
+      <div class="settings-sections-container">
+
+        <!-- SECTION 1: PROFILE & CURRENCY -->
+        <fieldset class="settings-section">
+          <legend class="settings-section-legend">
+            <span class="section-num">1</span>
+            Profile & Currency
+          </legend>
+
+          <div class="mb-3" style="margin-bottom: 12px; text-align: left;">
+            <label class="input-label-tag" for="stUserName">Your Name</label>
+            <div class="st-input-wrapper" style="margin-bottom: 0;">
+              <i data-lucide="user" class="st-input-icon"></i>
+              <input class="st-input-box" id="stUserName" type="text" placeholder="Enter your name..."
+                style="padding-left: 42px; border-radius: 14px; font-size: 13px; height: 38px;">
+            </div>
+          </div>
+
+          <div class="settings-grid-cols-2">
+            <div>
+              <label class="input-label-tag" for="stCurrencySymbol">Default Currency</label>
+              <div class="st-input-wrapper">
+                <i data-lucide="globe" class="st-input-icon"></i>
+                <select class="st-input-box" id="stCurrencySymbol" style="cursor: pointer; padding-left: 42px;">
+                  <option value="₹">₹ INR (India)</option>
+                  <option value="$">$ USD (USA)</option>
+                  <option value="£">£ GBP (UK)</option>
+                  <option value="€">€ EUR (Europe)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="input-label-tag" for="stOccupation">Occupation Profile</label>
+              <div class="st-input-wrapper">
+                <i data-lucide="user" class="st-input-icon"></i>
+                <select class="st-input-box" id="stOccupation" style="cursor: pointer; padding-left: 42px;">
+                  <option value="Student">Student (70% Cap)</option>
+                  <option value="Working">Earning (50% Cap)</option>
+                  <option value="Freelancer">Freelancer (60% Cap)</option>
+                  <option value="Other">Other (65% Cap)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- SECTION 2: YNAB BUDGET ALLOWANCES -->
+        <fieldset class="settings-section">
+          <legend class="settings-section-legend">
+            <span class="section-num">2</span>
+            YNAB Budget Allowances
+          </legend>
+
+          <div class="mb-4">
+            <label class="input-label-tag" for="stIncomeVal">Modify Monthly Funds</label>
+            <div class="st-input-wrapper">
+              <i data-lucide="wallet" class="st-input-icon" id="stIncomeIcon"></i>
+              <input class="st-input-box" id="stIncomeVal" type="number" placeholder="Enter income...">
+            </div>
+          </div>
+
+          <div class="settings-grid-cols-2">
+            <div>
+              <label class="input-label-tag" for="stBudgetType">Limit Period</label>
+              <div class="st-input-wrapper">
+                <i data-lucide="calendar" class="st-input-icon"></i>
+                <select class="st-input-box" id="stBudgetType" style="cursor: pointer; padding-left: 42px;">
+                  <option value="daily">Daily allowance</option>
+                  <option value="weekly">Weekly allowance</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="input-label-tag" for="stBudgetVal">Allowance Cap</label>
+              <div class="st-input-wrapper">
+                <i data-lucide="compass" class="st-input-icon"></i>
+                <input class="st-input-box" id="stBudgetVal" type="number" placeholder="Cap amount...">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- SECTION 3: BACKUPS & SANDBOX CONTROL -->
+        <fieldset class="settings-section" style="margin-bottom: 0;">
+          <legend class="settings-section-legend">
+            <span class="section-num">3</span>
+            Backups & Sandbox Control
+          </legend>
+
+          <div class="backup-cards-grid">
+            <!-- Card 1: Export -->
+            <div class="backup-card glass-panel" id="cardBackupExport">
+              <div class="backup-card-icon-wrapper export-color">
+                <i data-lucide="download"></i>
+              </div>
+              <div class="backup-card-details">
+                <h4 class="backup-card-title">Export Sandbox State</h4>
+                <p class="backup-card-desc">Download your local transactions & limits as a JSON file.</p>
+              </div>
+              <button class="backup-card-action-btn" id="backupExportBtn" type="button">
+                Export DB
+              </button>
+            </div>
+
+            <!-- Card 2: Import -->
+            <div class="backup-card glass-panel" id="cardBackupImport">
+              <div class="backup-card-icon-wrapper import-color">
+                <i data-lucide="upload"></i>
+              </div>
+              <div class="backup-card-details">
+                <h4 class="backup-card-title">Import JSON Backup</h4>
+                <p class="backup-card-desc">Restore saved budgets, logs, and user profile data.</p>
+              </div>
+              <button class="backup-card-action-btn" id="backupImportBtn" type="button">
+                Import DB
+              </button>
+              <input type="file" id="backupFileInput" accept=".json" style="display: none;">
+            </div>
+
+            <!-- Card 3: Reset -->
+            <div class="backup-card glass-panel danger-card" id="cardResetData">
+              <div class="backup-card-icon-wrapper reset-color">
+                <i data-lucide="trash-2"></i>
+              </div>
+              <div class="backup-card-details">
+                <h4 class="backup-card-title text-rose-500">Format All Records</h4>
+                <p class="backup-card-desc">Wipe all logs, stipends, and configuration settings completely.</p>
+              </div>
+              <button class="backup-card-action-btn danger-btn" id="resetDataBtn" type="button">
+                Reset Data
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+      </div>
+
+      <div class="btn-group" style="margin-top: 24px;">
+        <button class="secondary-btn" id="closeSettingsBtn" type="button"
+          style="flex: 1; border-radius: 14px; padding: 12px;">Cancel</button>
+        <button class="primary-btn" id="saveSettingsBtn" type="button"
+          style="flex: 1; border-radius: 14px; padding: 12px;">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       PHASE 6: LOGOUT CONFIRMATION MODAL OVERLAY
+       ============================================================= -->
+  <div class="modal-overlay-backdrop" id="logoutModalOverlay">
+    <div class="settings-modal-card glass-panel select-none relative animate-fadeIn"
+      style="max-width: 400px; padding: 24px;">
+
+      <!-- Top Close X Button -->
+      <button class="settings-close-x-btn" id="closeLogoutXBtn" type="button" aria-label="Close Logout Modal">
+        <i data-lucide="x"></i>
+      </button>
+
+      <h3 class="settings-modal-title text-zinc-100" style="margin-bottom: 8px; text-align: center;">Log Out of Spendly
+      </h3>
+      <p class="settings-modal-subtitle" style="margin-bottom: 24px; text-align: center; line-height: 1.5;">Would you
+        like to save a JSON backup of your transactions and budget configurations before logging out?</p>
+
+      <div class="flex flex-col gap-3" style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+        <button class="primary-btn flex items-center justify-center gap-2" id="logoutWithBackupBtn" type="button"
+          style="width: 100%; padding: 12px; border-radius: 14px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          Save Backup & Log Out
+        </button>
+        <button class="secondary-btn flex items-center justify-center gap-2" id="logoutWithoutBackupBtn" type="button"
+          style="width: 100%; padding: 12px; border-radius: 14px; font-size: 13px; color: #f43f5e !important; border-color: rgba(244, 63, 94, 0.2) !important; background: rgba(244, 63, 94, 0.05) !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+          Discard & Log Out
+        </button>
+        <button class="secondary-btn" id="logoutCancelBtn" type="button"
+          style="width: 100%; padding: 12px; border-radius: 14px; font-size: 13px;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =============================================================
+       PHASE 5: SYSTEM TOAST NOTIFICATION CONTAINER
+       ============================================================= -->
+  <div class="toast-banner-box" id="toastContainer">
+    <!-- Notifications will slide up dynamically via app.js -->
+  </div>
+
+
+  <!-- =============================================================
+       EXTERNAL UTILITIES PACKAGES CDN
+       ============================================================= -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="js/app.js?v=20260602"></script>
+
+</body>
+
+</html>

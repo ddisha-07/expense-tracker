@@ -1,0 +1,12 @@
+{
+  "name": "montra-smart-expense-tracker",
+  "version": "1.0.0",
+  "description": "Montra — Track less. Understand more. Premium student expense companion.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "lite-server"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}
