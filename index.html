@@ -6,16 +6,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO Optimization -->
-  <title>Spendly — Your Budget Companion</title>
+  <title>Xpenseo</title>
   <meta name="description"
-    content="Spendly is a premium, student-focused expense tracker. Quickly record expenses, manage YNAB-inspired budgets, organization fixed commitments, and secure backups completely privately.">
-  <meta name="author" content="Spendly Team">
+    content="Xpenseo is a premium, student-focused expense tracker. Quickly record expenses, manage YNAB-inspired budgets, organization fixed commitments, and secure backups completely privately.">
+  <meta name="author" content="Xpenseo Team">
   <meta name="theme-color" content="#070a13">
 
   <link rel="stylesheet" href="css/style.css?v=20260602">
 </head>
 
 <body>
+
+  <!-- Temporary Error Capture overlay -->
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '10px';
+      div.style.left = '10px';
+      div.style.right = '10px';
+      div.style.background = '#f43f5e';
+      div.style.color = '#ffffff';
+      div.style.padding = '16px';
+      div.style.zIndex = '999999';
+      div.style.borderRadius = '12px';
+      div.style.fontSize = '12px';
+      div.style.fontFamily = 'monospace';
+      div.style.whiteSpace = 'pre-wrap';
+      div.style.boxShadow = '0 10px 30px rgba(244,63,94,0.4)';
+      div.innerHTML = '<strong>JavaScript Runtime Error:</strong><br>' + message + '<br><em>Line ' + lineno + ', Col ' + colno + ' in ' + source + '</em><br><br><strong>Stack Trace:</strong><br>' + (error ? error.stack : 'No stack trace available');
+      document.body.appendChild(div);
+      return false;
+    };
+  </script>
 
   <!-- Futuristic Glowing Radial Background Blobs -->
   <div class="radial-blur-glow" style="top: -100px; left: -100px;"></div>
@@ -212,6 +235,18 @@
                     <label class="input-label-tag" for="obStudentEducation">Education Spends (<span
                         class="currency-symbol-lbl">₹</span>)</label>
                     <input class="st-input-box" id="obStudentEducation" type="number" min="0" value="400"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obStudentGroceries">Groceries Spends (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obStudentGroceries" type="number" min="0" value="300"
+                      style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                  </div>
+                  <div>
+                    <label class="input-label-tag" for="obStudentShopping">Shopping Spends (<span
+                        class="currency-symbol-lbl">₹</span>)</label>
+                    <input class="st-input-box" id="obStudentShopping" type="number" min="0" value="250"
                       style="padding-left: 12px; border-radius: 12px; height: 38px;">
                   </div>
                 </div>
