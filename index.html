@@ -50,7 +50,7 @@
        PHASE 1: ONBOARDING STEPPER SLIDER (NO INSTALLED NODES)
        ============================================================= -->
   <main class="onboarding-container" id="onboardingContainer">
-    <div class="onboarding-card glass-panel animate-fadeIn">
+    <div class="onboarding-card glass-panel animate-fadeIn" style="background: #111111; border: 1px solid var(--border-color); border-radius: 20px;">
 
       <!-- Stepper Progress Bar Lines -->
       <div class="onboarding-stepper-progress" id="obProgress">
@@ -67,124 +67,224 @@
 
           <!-- Slide 1: Welcome Screen -->
           <div class="onboarding-slide active" id="slide-1">
-            <div class="logo-container">
-              <div class="logo-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
-                </svg>
+            <div class="logo-container" style="text-align: center; margin-top: 10px;">
+              <span class="font-mono text-4xl font-bold text-[#f0f0f0]" style="font-size: 36px; font-family: var(--font-family); letter-spacing: -1px;">
+                <span class="text-[#00e87a]">X</span>penseo
+              </span>
+            </div>
+            <p class="tagline font-mono text-base text-[#606060] mt-2 mb-6" style="text-align: center; font-size: 13px; font-family: var(--font-family); margin-bottom: 20px;">Track smart. Spend smarter.</p>
+            
+            <!-- Beta Badge -->
+            <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#00e87a]/20 bg-[#00e87a]/5 text-[#00e87a] text-[10px] font-mono tracking-widest uppercase" style="display: inline-flex; align-items: center; border: 1px solid rgba(0, 232, 122, 0.2); background: rgba(0, 232, 122, 0.05); color: #00e87a; padding: 4px 12px; border-radius: 20px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px;">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#00e87a] animate-pulse" style="width: 5px; height: 5px; border-radius: 50%; background: #00e87a; display: inline-block; margin-right: 6px;"></span>
+                Now in Beta
               </div>
-              <h1 class="logo-text">Spendly</h1>
             </div>
-            <p class="tagline">"Track less. Understand more."</p>
-            <div class="slide-desc text-center" style="max-width: 340px; margin: 0 auto 30px auto;">
-              Your high-end budgeting companion. Secure, local-first sandbox tracking with zero configuration overhead.
-              Ready in seconds.
+            
+            <div class="slide-desc text-center text-sm text-[#606060]/80" style="max-width: 380px; margin: 0 auto 30px auto; line-height: 1.6; text-align: center; font-size: 12px; color: #606060cc;">
+              A complete picture of your financial life — log expenses, understand patterns, and stay ahead of every transaction. Built for the way you actually spend.
             </div>
+            
+            <!-- Stats Grid -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 340px; margin: 0 auto 35px auto; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 16px 0;">
+              <div style="text-align: center;">
+                <p style="font-family: var(--font-family); font-weight: 700; font-size: 16px; color: #00e87a; margin-bottom: 2px;">2.4M+</p>
+                <p style="font-size: 9px; color: #606060; margin: 0; line-height: 1.2;">Transactions tracked</p>
+              </div>
+              <div style="text-align: center;">
+                <p style="font-family: var(--font-family); font-weight: 700; font-size: 16px; color: #00e87a; margin-bottom: 2px;">18K+</p>
+                <p style="font-size: 9px; color: #606060; margin: 0; line-height: 1.2;">Active users</p>
+              </div>
+              <div style="text-align: center;">
+                <p style="font-family: var(--font-family); font-weight: 700; font-size: 16px; color: #00e87a; margin-bottom: 2px;">₹4,200</p>
+                <p style="font-size: 9px; color: #606060; margin: 0; line-height: 1.2;">Avg. savings found</p>
+              </div>
+            </div>
+
             <div class="btn-group">
-              <button class="primary-btn" id="obStartBtn" type="button">
-                Get Started!
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2"
-                  stroke="currentColor" style="width: 18px; height: 18px;">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
+              <button class="primary-btn" id="obStartBtn" type="button" style="width: 100%; justify-content: center; background: #00e87a; color: #080808; border: none; font-weight: 700; border-radius: 12px; height: 42px; font-family: var(--font-family);">
+                Get Started →
               </button>
             </div>
           </div>
 
-          <!-- Slide 2: Country/Currency & Occupation Settings -->
+          <!-- Slide 2: Simulated Authentication -->
           <div class="onboarding-slide" id="slide-2">
             <div>
-              <h2 class="slide-title text-zinc-100">Select Region & Profile</h2>
-              <p class="slide-desc">Choose your default currency and select your current occupation to calibrate
-                spending goal suggestions.</p>
+              <div class="logo-container text-center mb-4" style="text-align: center; margin-bottom: 16px;">
+                <span class="font-mono text-2xl font-bold text-[#f0f0f0]">
+                  <span class="text-[#00e87a]">X</span>penseo
+                </span>
+                <p class="text-[#606060] text-xs mt-1" id="authSubtitle">Create your account</p>
+              </div>
+              
+              <!-- Tab switchers SignUp/SignIn -->
+              <div style="display: flex; background: #161616; padding: 4px; border-radius: 10px; margin-bottom: 20px;">
+                <button type="button" class="numpad-type-toggle-btn active" id="authTabSignup" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; border-radius: 8px; border: none; background: #00e87a; color: #080808; cursor: pointer; transition: all 0.2s;" onclick="toggleAuthTab('signup')">Sign Up</button>
+                <button type="button" class="numpad-type-toggle-btn" id="authTabLogin" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; border-radius: 8px; border: none; background: transparent; color: #606060; cursor: pointer; transition: all 0.2s;" onclick="toggleAuthTab('login')">Sign In</button>
+              </div>
 
-              <!-- User Name input -->
-              <div class="mb-4" style="margin-bottom: 16px; text-align: left;">
-                <label class="input-label-tag" for="obUserName">Your Name</label>
-                <div class="st-input-wrapper" style="margin-bottom: 0;">
-                  <i data-lucide="user" class="st-input-icon"></i>
-                  <input class="st-input-box" id="obUserName" type="text" placeholder="Enter your name..."
-                    style="padding-left: 42px; border-radius: 14px; font-size: 13px; height: 42px;" value="Shekhar">
+              <!-- Apple button -->
+              <button type="button" class="secondary-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; border: 1px solid var(--border-color); background: #1c1c1c; height: 42px; font-size: 12px; margin-bottom: 12px;">
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z" />
+                </svg>
+                Continue with Apple
+              </button>
+
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+                <span style="font-size: 10px; color: #606060; font-family: var(--font-family);">or</span>
+                <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+              </div>
+
+              <!-- Email/Phone switch buttons -->
+              <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                <button type="button" class="numpad-cat-btn selected" id="authMethodEmail" style="flex: 1; padding: 8px 4px; font-size: 10px; font-family: var(--font-family); font-weight: 700; border-radius: 8px;" onclick="setAuthMethod('email')">📧 Email</button>
+                <button type="button" class="numpad-cat-btn" id="authMethodPhone" style="flex: 1; padding: 8px 4px; font-size: 10px; font-family: var(--font-family); font-weight: 700; border-radius: 8px;" onclick="setAuthMethod('phone')">📱 Phone</button>
+              </div>
+
+              <!-- Email input fields -->
+              <div id="authEmailFields" style="display: block; text-align: left; gap: 12px;">
+                <div class="mb-3">
+                  <label class="input-label-tag" for="authEmailInput" style="font-size: 10px; letter-spacing: 1px;">Email Address</label>
+                  <input class="st-input-box" id="authEmailInput" type="email" placeholder="arjun@example.com" style="padding-left: 12px; border-radius: 12px; height: 42px; background: #1c1c1c; border: 1px solid var(--border-color); color: #f0f0f0;">
+                </div>
+                <div class="mb-3">
+                  <label class="input-label-tag" for="authPasswordInput" style="font-size: 10px; letter-spacing: 1px;">Password</label>
+                  <input class="st-input-box" id="authPasswordInput" type="password" placeholder="••••••••" style="padding-left: 12px; border-radius: 12px; height: 42px; background: #1c1c1c; border: 1px solid var(--border-color); color: #f0f0f0;">
                 </div>
               </div>
 
-              <!-- Currency select grid -->
-              <span class="input-label-tag" style="margin-bottom: 8px;">Country / Currency</span>
-              <div class="grid grid-cols-4 gap-2 mb-5 select-none" id="obCurrencyGrid"
-                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;">
-                <button type="button" class="numpad-cat-btn selected" data-currency="₹" data-name="INR">
-                  <span class="text-lg font-extrabold">₹</span>
-                  <span class="text-[8px] font-bold mt-1">India</span>
-                </button>
-                <button type="button" class="numpad-cat-btn" data-currency="$" data-name="USD">
-                  <span class="text-lg font-extrabold">$</span>
-                  <span class="text-[8px] font-bold mt-1">USA</span>
-                </button>
-                <button type="button" class="numpad-cat-btn" data-currency="£" data-name="GBP">
-                  <span class="text-lg font-extrabold">£</span>
-                  <span class="text-[8px] font-bold mt-1">UK</span>
-                </button>
-                <button type="button" class="numpad-cat-btn" data-currency="€" data-name="EUR">
-                  <span class="text-lg font-extrabold">€</span>
-                  <span class="text-[8px] font-bold mt-1">Europe</span>
-                </button>
+              <!-- Phone input fields -->
+              <div id="authPhoneFields" style="display: none; text-align: left; gap: 12px;">
+                <div class="mb-3">
+                  <label class="input-label-tag" for="authPhoneInput" style="font-size: 10px; letter-spacing: 1px;">Phone Number</label>
+                  <input class="st-input-box" id="authPhoneInput" type="tel" placeholder="+91 98765 43210" style="padding-left: 12px; border-radius: 12px; height: 42px; background: #1c1c1c; border: 1px solid var(--border-color); color: #f0f0f0;">
+                </div>
               </div>
 
-              <!-- Occupation select grid -->
-              <span class="input-label-tag" style="margin-bottom: 8px;">Occupation Status</span>
-              <div class="grid grid-cols-2 gap-3 mb-4 select-none" id="obOccupationGrid"
-                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px;">
-                <button type="button" class="numpad-cat-btn selected p-3 flex flex-row gap-3 items-center justify-start"
-                  data-occupation="Student"
-                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
-                  <i data-lucide="education" class="w-5 h-5 flex-shrink-0"></i>
-                  <span class="font-extrabold text-xs">Student</span>
-                </button>
-                <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
-                  data-occupation="Working"
-                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
-                  <i data-lucide="tag" class="w-5 h-5 flex-shrink-0"></i>
-                  <span class="font-extrabold text-xs">Earning</span>
-                </button>
-                <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
-                  data-occupation="Freelancer"
-                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
-                  <i data-lucide="compass" class="w-5 h-5 flex-shrink-0"></i>
-                  <span class="font-extrabold text-xs">Freelancer</span>
-                </button>
-                <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
-                  data-occupation="Other"
-                  style="flex-direction: row; justify-content: flex-start; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
-                  <i data-lucide="wallet" class="w-5 h-5 flex-shrink-0"></i>
-                  <span class="font-extrabold text-xs">Other</span>
-                </button>
-              </div>
             </div>
-
-            <div class="btn-group">
+            <div class="btn-group" style="margin-top: 15px;">
               <button class="secondary-btn ob-prev-btn" type="button">Back</button>
               <button class="primary-btn ob-next-btn" type="button">Continue</button>
             </div>
           </div>
 
-          <!-- Slide 3: Inflow Setup -->
-          <!-- Slide 3: Lifestyle & Profile Parameters Form -->
-          <div class="onboarding-slide" id="slide-3" style="max-height: 480px; overflow-y: auto; padding-right: 8px;">
+          <!-- Slide 3: Profile Setup -->
+          <div class="onboarding-slide" id="slide-3">
             <div>
-              <h2 class="slide-title text-zinc-100">Lifestyle & Profile Calibrator</h2>
-              <p class="slide-desc">Fill out your monthly estimates. We will dynamically configure your YNAB allowances
-                and categories.</p>
+              <div class="logo-container text-center mb-3" style="text-align: center; margin-bottom: 12px;">
+                <span class="font-mono text-xl font-bold text-[#f0f0f0]">
+                  <span class="text-[#00e87a]">X</span>penseo
+                </span>
+                <p class="text-[#606060] text-xs mt-1">Let's set up your profile</p>
+              </div>
+
+              <h2 class="slide-title text-zinc-100" style="font-size: 16px; margin-bottom: 2px;">Who are you?</h2>
+              <p class="slide-desc" style="margin-bottom: 16px;">Help us personalise your experience.</p>
+
+              <!-- Full Name input -->
+              <div class="mb-4" style="margin-bottom: 16px; text-align: left;">
+                <label class="input-label-tag" for="obUserName" style="font-size: 10px; letter-spacing: 1.5px;">Full Name</label>
+                <input class="st-input-box" id="obUserName" type="text" placeholder="Arjun Sharma"
+                  style="padding-left: 14px; border-radius: 12px; font-size: 13px; height: 42px; background: #1c1c1c; border: 1px solid var(--border-color); color: #f0f0f0;" value="Shekhar">
+              </div>
+
+              <!-- Currency select grid -->
+              <div style="text-align: left; margin-bottom: 16px;">
+                <span class="input-label-tag" style="margin-bottom: 6px; display: block; font-size: 10px; letter-spacing: 1.5px;">Currency Region</span>
+                <div class="grid grid-cols-4 gap-2 select-none" id="obCurrencyGrid"
+                  style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                  <button type="button" class="numpad-cat-btn selected" data-currency="₹" data-name="INR" style="padding: 8px 4px; border-radius: 8px;">
+                    <span class="text-base font-extrabold">₹</span>
+                    <span class="text-[8px] font-bold mt-1" style="display: block;">India</span>
+                  </button>
+                  <button type="button" class="numpad-cat-btn" data-currency="$" data-name="USD" style="padding: 8px 4px; border-radius: 8px;">
+                    <span class="text-base font-extrabold">$</span>
+                    <span class="text-[8px] font-bold mt-1" style="display: block;">USA</span>
+                  </button>
+                  <button type="button" class="numpad-cat-btn" data-currency="£" data-name="GBP" style="padding: 8px 4px; border-radius: 8px;">
+                    <span class="text-base font-extrabold">£</span>
+                    <span class="text-[8px] font-bold mt-1" style="display: block;">UK</span>
+                  </button>
+                  <button type="button" class="numpad-cat-btn" data-currency="€" data-name="EUR" style="padding: 8px 4px; border-radius: 8px;">
+                    <span class="text-base font-extrabold">€</span>
+                    <span class="text-[8px] font-bold mt-1" style="display: block;">Europe</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Occupation select grid (cards) -->
+              <div style="text-align: left;">
+                <span class="input-label-tag" style="margin-bottom: 6px; display: block; font-size: 10px; letter-spacing: 1.5px;">Occupation Status</span>
+                <div class="grid grid-cols-2 gap-3 select-none" id="obOccupationGrid"
+                  style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                  <button type="button" class="numpad-cat-btn selected p-3 flex flex-row gap-3 items-center justify-start"
+                    data-occupation="Student"
+                    style="flex-direction: row; justify-content: flex-start; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-radius: 10px;">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 flex-shrink-0" style="width: 16px; height: 16px;"></i>
+                    <span class="font-extrabold text-[11px]">Student</span>
+                  </button>
+                  <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
+                    data-occupation="Working"
+                    style="flex-direction: row; justify-content: flex-start; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-radius: 10px;">
+                    <i data-lucide="briefcase" class="w-4 h-4 flex-shrink-0" style="width: 16px; height: 16px;"></i>
+                    <span class="font-extrabold text-[11px]">Earning</span>
+                  </button>
+                  <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
+                    data-occupation="Freelancer"
+                    style="flex-direction: row; justify-content: flex-start; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-radius: 10px;">
+                    <i data-lucide="laptop" class="w-4 h-4 flex-shrink-0" style="width: 16px; height: 16px;"></i>
+                    <span class="font-extrabold text-[11px]">Freelancer</span>
+                  </button>
+                  <button type="button" class="numpad-cat-btn p-3 flex flex-row gap-3 items-center justify-start"
+                    data-occupation="Other"
+                    style="flex-direction: row; justify-content: flex-start; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-radius: 10px;">
+                    <i data-lucide="wallet" class="w-4 h-4 flex-shrink-0" style="width: 16px; height: 16px;"></i>
+                    <span class="font-extrabold text-[11px]">Other</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 15px;">
+              <button class="secondary-btn ob-prev-btn" type="button">Back</button>
+              <button class="primary-btn ob-next-btn" type="button">Continue</button>
+            </div>
+          </div>
+
+          <!-- Slide 4: Lifestyle/Finances and Fixed Commitments consolidated -->
+          <div class="onboarding-slide" id="slide-4" style="max-height: 480px; overflow-y: auto; padding-right: 8px;">
+            <div>
+              <h2 class="slide-title text-zinc-100" style="font-size: 16px; margin-bottom: 2px;">Lifestyle & Profile Calibrator</h2>
+              <p class="slide-desc" style="margin-bottom: 12px;">Fill out your monthly estimates. We will dynamically configure your YNAB allowances.</p>
 
               <!-- Student Profile Form Fields -->
               <div id="obStudentProfileForm" class="profile-conditional-form animate-fadeIn"
                 style="display: none; text-align: left; gap: 12px; flex-direction: column;">
-                <!-- Monthly Inflow Stipend -->
+                
+                <!-- Income Stipend Switcher -->
                 <div class="mb-3">
-                  <label class="input-label-tag" for="obStudentInflow">Monthly Stipend / Inflow (<span
-                      class="currency-symbol-lbl">₹</span>)</label>
+                  <label class="input-label-tag" style="margin-bottom: 6px;">Do you earn any income?</label>
+                  <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <button type="button" class="numpad-cat-btn selected" id="obStudentEarnsYes" style="flex: 1; padding: 8px 4px; font-size: 10px; font-weight: 700; border-radius: 8px;" onclick="setStudentEarnings(true)">Yes, I do</button>
+                    <button type="button" class="numpad-cat-btn" id="obStudentEarnsNo" style="flex: 1; padding: 8px 4px; font-size: 10px; font-weight: 700; border-radius: 8px;" onclick="setStudentEarnings(false)">Not yet</button>
+                  </div>
+                </div>
+
+                <!-- Monthly Inflow/Allowance -->
+                <div class="mb-3">
+                  <label class="input-label-tag" id="obStudentInflowLabel" for="obStudentInflow">Monthly Stipend / Inflow (<span class="currency-symbol-lbl">₹</span>)</label>
                   <input class="st-input-box" id="obStudentInflow" type="number" min="0" value="3000"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+
+                <!-- Prior Balance -->
+                <div class="mb-3">
+                  <label class="input-label-tag" for="obStudentInitialBalance">Prior Account Balance (<span class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obStudentInitialBalance" type="number" min="0" value="0"
                     style="padding-left: 12px; border-radius: 12px; height: 38px;">
                 </div>
 
@@ -269,6 +369,13 @@
                     style="padding-left: 12px; border-radius: 12px; height: 38px;">
                 </div>
 
+                <!-- Prior Balance -->
+                <div class="mb-3">
+                  <label class="input-label-tag" for="obWorkingInitialBalance">Prior Account Balance (<span class="currency-symbol-lbl">₹</span>)</label>
+                  <input class="st-input-box" id="obWorkingInitialBalance" type="number" min="0" value="0"
+                    style="padding-left: 12px; border-radius: 12px; height: 38px;">
+                </div>
+
                 <div class="grid grid-cols-2 gap-3"
                   style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
                   <div>
@@ -316,6 +423,28 @@
                     style="padding-left: 12px; border-radius: 12px; height: 38px;">
                 </div>
               </div>
+
+              <!-- Fixed Commitments List nested here (original Slide 4) -->
+              <div style="margin-top: 24px; border-top: 1px dashed var(--border-color); padding-top: 20px; text-align: left;">
+                <h3 class="input-label-tag" style="font-size: 10px; letter-spacing: 1.5px; margin-bottom: 8px;">Dynamic Fixed Commitments</h3>
+                
+                <div class="fixed-bills-headers"
+                  style="display: grid; grid-template-columns: 1.4fr 1fr 1.4fr 40px; gap: 8px; padding: 0 10px; margin-bottom: 8px; font-size: 9px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">
+                  <span>Commitment</span>
+                  <span>Amount</span>
+                  <span>Recurrence</span>
+                  <span></span>
+                </div>
+
+                <div class="fixed-bills-list" id="obFixedExpensesList" style="max-height: 150px; overflow-y: auto;">
+                  <!-- Injected dynamically by app.js -->
+                </div>
+
+                <button class="add-bill-btn animate-fadeIn" id="obAddBillBtn" type="button" style="margin-top: 8px; width: 100%; border: 1px dashed var(--border-color); background: rgba(255,255,255,0.02); height: 36px; font-size: 11px;">
+                  + Add Fixed Commitment
+                </button>
+              </div>
+
             </div>
 
             <div class="btn-group" style="margin-top: 15px;">
@@ -324,78 +453,52 @@
             </div>
           </div>
 
-          <!-- Slide 4: Fixed Expenses Manager -->
-          <div class="onboarding-slide" id="slide-4">
-            <div>
-              <h2 class="slide-title text-zinc-100">Identify Fixed Commitments</h2>
-              <p class="slide-desc">Input your fixed expenses. Specify the commitment name, amount, and recurrence
-                frequency (Monthly/Weekly or One-time) to isolate your daily allowances.</p>
-
-              <!-- Column labels headers -->
-              <div class="fixed-bills-headers animate-fadeIn"
-                style="display: grid; grid-template-columns: 1.4fr 1fr 1.4fr 40px; gap: 8px; padding: 0 10px; margin-bottom: 8px; font-size: 9px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">
-                <span>Commitment Name</span>
-                <span>Amount</span>
-                <span>Payment Freq</span>
-                <span></span>
-              </div>
-
-              <div class="fixed-bills-list" id="obFixedExpensesList">
-                <!-- Injected dynamically by app.js -->
-              </div>
-
-              <button class="add-bill-btn animate-fadeIn" id="obAddBillBtn" type="button">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Fixed Commitment
-              </button>
-            </div>
-
-            <div class="btn-group" style="margin-top: 15px;">
-              <button class="secondary-btn ob-prev-btn" type="button">Back</button>
-              <button class="primary-btn ob-next-btn" type="button">Continue</button>
-            </div>
-          </div>
-
-          <!-- Slide 5: Budget Goal Suggestions -->
+          <!-- Slide 5: Target Goals Suggestions -->
           <div class="onboarding-slide" id="slide-5">
             <div>
-              <h2 class="slide-title text-zinc-100">Student Target Goals</h2>
-              <p class="slide-desc">YNAB-inspired remaining spend indexes. We suggest allocating 70% as spendable
-                allowances, saving the rest.</p>
+              <div class="logo-container text-center mb-3" style="text-align: center; margin-bottom: 12px;">
+                <span class="font-mono text-xl font-bold text-[#f0f0f0]">
+                  <span class="text-[#00e87a]">X</span>penseo
+                </span>
+                <p class="text-[#606060] text-xs mt-1">Calibrating your target goals</p>
+              </div>
 
-              <div class="budget-summary-card">
-                <div class="summary-stat-row">
-                  <span class="summary-stat-label">Monthly stipend inflow:</span>
-                  <span class="summary-stat-val text-zinc-200" id="obSummaryIncome">₹3,000</span>
+              <h2 class="slide-title text-zinc-100" style="font-size: 16px; margin-bottom: 2px;">Your Suggested Budgets</h2>
+              <p class="slide-desc" style="margin-bottom: 12px;">YNAB suggestions: allocating spendable headroom, saving the rest.</p>
+
+              <div class="budget-summary-card" style="background: #161616; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left;">
+                <div class="summary-stat-row" style="display: flex; justify-content: space-between; font-size: 11px; color: #606060; margin-bottom: 6px;">
+                  <span class="summary-stat-label">Expected Stipend Inflow:</span>
+                  <span class="summary-stat-val text-zinc-200" id="obSummaryIncome" style="font-weight: 700; color: #f0f0f0;">₹3,000</span>
                 </div>
-                <div class="summary-stat-row">
-                  <span class="summary-stat-label">Fixed obligations debit:</span>
-                  <span class="summary-stat-val text-zinc-200" id="obSummaryBills">₹1,305</span>
+                <div class="summary-stat-row" style="display: flex; justify-content: space-between; font-size: 11px; color: #606060; margin-bottom: 6px;">
+                  <span class="summary-stat-label">Fixed Commitments Total:</span>
+                  <span class="summary-stat-val text-zinc-200" id="obSummaryBills" style="font-weight: 700; color: #f0f0f0;">₹1,200</span>
                 </div>
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 6px 0;">
-                <div class="summary-stat-row" style="color: var(--accent-secondary);">
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;">
+                <div class="summary-stat-row" style="display: flex; justify-content: space-between; font-size: 12px; color: #00e87a;">
                   <span class="summary-stat-label" style="font-weight: 700;">Remaining Disposable:</span>
-                  <span class="summary-stat-val" id="obSummaryDisposable" style="font-weight: 800;">₹1,695</span>
+                  <span class="summary-stat-val" id="obSummaryDisposable" style="font-weight: 800;">₹1,800</span>
                 </div>
               </div>
 
-              <div class="suggested-badge-container">
-                <div class="budget-tier-card selected" id="obDailyCard">
-                  <div class="budget-tier-title">Daily Suggested</div>
-                  <div class="budget-tier-amount" id="obDailyAmount">₹39</div>
-                  <div class="budget-tier-subtitle">70% spendable caps</div>
+              <div class="suggested-badge-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; text-align: left;">
+                <div class="budget-tier-card selected" id="obDailyCard" style="background: rgba(0, 232, 122, 0.05); border: 1px solid #00e87a; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s;">
+                  <div class="budget-tier-title" style="font-size: 10px; color: #606060; text-transform: uppercase;">Daily Suggested</div>
+                  <div class="budget-tier-amount" id="obDailyAmount" style="font-size: 20px; font-weight: 800; color: #00e87a; margin: 4px 0;">₹41</div>
+                  <div class="budget-tier-subtitle" style="font-size: 8px; color: #606060;">spendable allowance</div>
                 </div>
-                <div class="budget-tier-card" id="obWeeklyCard">
-                  <div class="budget-tier-title">Weekly Suggested</div>
-                  <div class="budget-tier-amount" id="obWeeklyAmount">₹276</div>
-                  <div class="budget-tier-subtitle">70% spendable caps</div>
+                <div class="budget-tier-card" id="obWeeklyCard" style="background: #1c1c1c; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s;">
+                  <div class="budget-tier-title" style="font-size: 10px; color: #606060; text-transform: uppercase;">Weekly Suggested</div>
+                  <div class="budget-tier-amount" id="obWeeklyAmount" style="font-size: 20px; font-weight: 800; color: #f0f0f0; margin: 4px 0;">₹290</div>
+                  <div class="budget-tier-subtitle" style="font-size: 8px; color: #606060;">spendable allowance</div>
                 </div>
               </div>
             </div>
 
             <div class="btn-group" style="margin-top: 15px;">
               <button class="secondary-btn ob-prev-btn" type="button">Back</button>
-              <button class="primary-btn" id="obCompleteOnboardingBtn" type="button">Looks Perfect</button>
+              <button class="primary-btn" id="obCompleteOnboardingBtn" type="button" style="background: #00e87a; color: #080808; font-weight: 700; border: none; height: 42px; border-radius: 12px; font-family: var(--font-family);">Looks Perfect</button>
             </div>
           </div>
 
@@ -411,126 +514,143 @@
        ============================================================= -->
   <div class="dashboard-container" id="dashboardContainer">
 
-    <!-- Navbar Header -->
-    <header class="navbar">
-      <div class="nav-brand" id="navBrand" style="cursor: pointer;">
-        <div class="nav-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
-          </svg>
-        </div>
-        <div>
-          <h2 class="nav-title text-zinc-100 font-extrabold select-none">Spendly</h2>
-          <span class="nav-tagline" id="navBrandGreeting">"Track less. Understand more."</span>
-        </div>
+    <!-- Figma Glassmorphic Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-x">X</span>penseo
       </div>
-
-      <div class="nav-controls">
-        <select class="nav-month-select" id="dashMonthFilter" title="Select active month to analyze historical spending"
-          style="background: rgba(17, 24, 39, 0.65); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; margin-right: 8px; font-family: var(--font-family);">
-          <!-- Populate dynamically in app.js -->
-        </select>
-        <span class="nav-badge" id="cloudStatusBadge">
-          <i data-lucide="shield" class="w-3.5 h-3.5 mr-1 text-indigo-400"></i>
-          Dorm local mode
-        </span>
-        <button class="circle-btn" id="themeToggleBtn" type="button" aria-label="Toggle Theme">
-          <i data-lucide="sun" class="w-5 h-5"></i>
-        </button>
-        <button class="circle-btn" id="settingsBtn" type="button" aria-label="Settings">
-          <i data-lucide="settings" class="w-5 h-5"></i>
-        </button>
-        <button class="circle-btn" id="logoutBtn" type="button" aria-label="Logout" style="color: #f43f5e !important;">
-          <i data-lucide="log-out" class="w-5 h-5"></i>
-        </button>
-      </div>
-    </header>
-
-    <!-- Main Grid Dashboard layout -->
-    <main class="dashboard-grid">
-
-      <!-- Statistics Stat Cards Grid col 12 -->
-      <section class="stats-container">
-
-        <!-- Metric Card 1: Disposable Balance -->
-        <div class="stat-card glass-panel group hover:-translate-y-0.5 transition-all duration-200">
-          <div class="stat-header">
-            <span class="stat-label">Disposable Balance</span>
-            <div class="stat-icon"><i data-lucide="wallet" class="w-4 h-4"></i></div>
-          </div>
-          <div class="stat-value text-zinc-100" id="dashTotalBalance">₹0</div>
-          <span class="stat-subtext">Remaining stipends this month</span>
-        </div>
-
-        <!-- Metric Card 2: Income credit -->
-        <div class="stat-card glass-panel income hover:-translate-y-0.5 transition-all duration-200">
-          <div class="stat-header">
-            <span class="stat-label">Monthly Inflow</span>
-            <div class="stat-icon"><i data-lucide="arrow-down-left" class="w-4 h-4"></i></div>
-          </div>
-          <div class="stat-value text-zinc-100" id="dashTotalIncome">₹0</div>
-          <span class="stat-subtext">Registered stipends limit</span>
-        </div>
-
-        <!-- Metric Card 3: Outflows spent -->
-        <div class="stat-card glass-panel expenses hover:-translate-y-0.5 transition-all duration-200">
-          <div class="stat-header">
-            <span class="stat-label">Total Outflow</span>
-            <div class="stat-icon"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
-          </div>
-          <div class="stat-value text-zinc-100" id="dashTotalExpenses">₹0</div>
-          <span class="stat-subtext">Expenses logged this month</span>
-        </div>
-
-        <!-- Metric Card 4: Daily allowance progress -->
-        <div class="stat-card glass-panel hover:-translate-y-0.5 transition-all duration-200">
-          <div class="stat-header">
-            <span class="stat-label" id="budgetMetricLabel">Daily Budget</span>
-            <div class="stat-icon"><i data-lucide="compass" class="w-4 h-4"></i></div>
-          </div>
-          <div class="stat-value text-zinc-100" id="dashBudgetVal">₹0</div>
-          <div class="budget-progress-container">
-            <div class="progress-label-row">
-              <span id="budgetSpentText">₹0 spent</span>
-              <span>limit caps</span>
-            </div>
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="budgetProgressFill"></div>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- Predictive Coach Alerts Banner Container -->
-      <div id="predictiveAlertsBanner" style="grid-column: span 12; width: 100%;">
-        <!-- Injected dynamically by app.js -->
-      </div>
-
-      <!-- Grid col 12 Tabs control list -->
-      <nav class="dashboard-tabs-bar">
+      <nav class="sidebar-nav">
         <button class="tab-btn active" data-tab="analytics" type="button">
-          <i data-lucide="logo" class="w-4 h-4"></i>
-          Dashboard View
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          Overview
         </button>
         <button class="tab-btn" data-tab="ledger" type="button">
-          <i data-lucide="wallet" class="w-4 h-4"></i>
-          Transaction Ledger
+          <i data-lucide="receipt" class="w-4 h-4"></i>
+          Transactions
         </button>
         <button class="tab-btn" data-tab="insights" type="button">
           <i data-lucide="compass" class="w-4 h-4"></i>
-          Smart Insights
+          Coach Hub
         </button>
         <button class="tab-btn" data-tab="budgets" type="button">
+          <i data-lucide="piggy-bank" class="w-4 h-4"></i>
+          Budget
+        </button>
+        <button class="tab-btn" id="sidebarSettingsBtn" type="button">
           <i data-lucide="settings" class="w-4 h-4"></i>
-          Category Planner
+          Settings
         </button>
       </nav>
+      
+      <!-- Profile Card at bottom of sidebar -->
+      <div class="sidebar-profile">
+        <div class="flex items-center gap-3 py-2 mb-1" style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <div class="profile-avatar" id="sidebarAvatar" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(0, 232, 122, 0.15); border: 1px solid rgba(0, 232, 122, 0.2); display: flex; align-items: center; justify-content: center; color: #00e87a; font-family: var(--font-family); font-size: 12px; font-weight: 700; flex-shrink: 0;">S</div>
+          <div style="overflow: hidden; min-w-0; flex: 1;">
+            <p id="sidebarProfileName" style="font-size: 12px; font-weight: 700; color: #f0f0f0; margin: 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-family: var(--font-family);">Shekhar</p>
+            <p style="font-size: 10px; color: #606060; margin: 0;">Free plan</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+          <button type="button" class="circle-btn" id="themeToggleBtn" aria-label="Toggle Theme" style="background: transparent; border: none; color: #606060; cursor: pointer; padding: 0;">
+            <i data-lucide="sun" class="w-4 h-4" style="width: 14px; height: 14px;"></i>
+          </button>
+          <button type="button" class="sidebar-signout-btn" id="logoutBtn" style="display: flex; align-items: center; gap: 6px; background: transparent; border: none; color: #606060; font-family: var(--font-family); font-size: 11px; cursor: pointer;">
+            <i data-lucide="log-out" class="w-4 h-4" style="width: 12px; height: 12px;"></i>
+            Sign out
+          </button>
+        </div>
+      </div>
+    </aside>
 
-      <!-- Main Columns view Grid splits (Col 8, Col 4) -->
-      <section class="main-tab-panel">
+    <!-- Main Content Panel -->
+    <main class="main-content-panel">
+      
+      <!-- Sticky header -->
+      <header class="sticky-header">
+        <div>
+          <h1 class="view-title font-mono" id="currentViewTitle">Overview</h1>
+          <p class="current-date-lbl" id="headerDateLabel">Thursday, 2 July 2026</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <!-- Month Filter Selector -->
+          <select class="nav-month-select" id="dashMonthFilter" title="Select active month to analyze historical spending"
+            style="background: #1c1c1c; color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 12px; font-size: 10px; font-weight: 700; cursor: pointer; outline: none; font-family: var(--font-family); height: 34px;">
+            <!-- Populate dynamically in app.js -->
+          </select>
+          
+          <button class="primary-btn" id="floatingAddBtn" type="button" style="background: #00e87a; color: #080808; border: none; font-weight: 700; border-radius: 10px; height: 34px; font-size: 11px; padding: 0 16px; font-family: var(--font-family); display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+            Add Transaction
+          </button>
+        </div>
+      </header>
+      
+      <div class="dashboard-content-scroll">
+        
+        <!-- Welcome Greeting Bar -->
+        <div class="dashboard-greeting-bar" style="grid-column: span 12; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div>
+            <p style="color: #606060; font-size: 12px; margin: 0; font-family: var(--font-family);">Good day,</p>
+            <h2 id="dashboardGreetingName" style="font-size: 24px; font-weight: 700; color: #f0f0f0; margin: 4px 0 0 0; font-family: var(--font-family);">Shekhar 👋</h2>
+          </div>
+          <div style="text-align: right;">
+            <p style="font-size: 10px; color: #606060; font-family: var(--font-family); text-transform: uppercase; letter-spacing: 1px; margin: 0;">Active Session</p>
+            <p id="dashboardTransactionsCount" style="font-family: var(--font-family); font-weight: 700; color: #00e87a; font-size: 12px; margin: 2px 0 0 0;">0 transactions</p>
+          </div>
+        </div>
+
+        <!-- Predictive Coach Alerts Banner Container -->
+        <div id="predictiveAlertsBanner" style="width: 100%;">
+          <!-- Injected dynamically by app.js -->
+        </div>
+
+        <!-- Statistics Stat Cards Grid -->
+        <section class="stats-container">
+
+          <!-- Metric Card 1: Disposable Balance -->
+          <div class="stat-card glass-panel group hover:-translate-y-0.5 transition-all duration-200">
+            <div class="stat-header">
+              <span class="stat-label">Disposable Balance</span>
+              <div class="stat-icon"><i data-lucide="wallet" class="w-4 h-4"></i></div>
+            </div>
+            <div class="stat-value text-zinc-100" id="dashTotalBalance">₹0</div>
+            <span class="stat-subtext">Remaining stipend this month</span>
+          </div>
+
+          <!-- Metric Card 2: Income credit -->
+          <div class="stat-card glass-panel income hover:-translate-y-0.5 transition-all duration-200">
+            <div class="stat-header">
+              <span class="stat-label">Monthly Inflow</span>
+              <div class="stat-icon"><i data-lucide="arrow-down-left" class="w-4 h-4"></i></div>
+            </div>
+            <div class="stat-value text-zinc-100" id="dashTotalIncome">₹0</div>
+            <span class="stat-subtext">Registered stipends limit</span>
+          </div>
+
+          <!-- Metric Card 3: Outflows spent -->
+          <div class="stat-card glass-panel expenses hover:-translate-y-0.5 transition-all duration-200">
+            <div class="stat-header">
+              <span class="stat-label">Total Outflow</span>
+              <div class="stat-icon"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
+            </div>
+            <div class="stat-value text-zinc-100" id="dashTotalExpenses">₹0</div>
+            <span class="stat-subtext">Expenses logged this month</span>
+          </div>
+
+          <!-- Metric Card 4: Account Balance -->
+          <div class="stat-card glass-panel hover:-translate-y-0.5 transition-all duration-200">
+            <div class="stat-header">
+              <span class="stat-label">Account Balance</span>
+              <div class="stat-icon"><i data-lucide="piggy-bank" class="w-4 h-4"></i></div>
+            </div>
+            <div class="stat-value text-zinc-100" id="dashAccountBalance">₹0</div>
+            <span class="stat-subtext">Total cash pool holdings</span>
+          </div>
+
+        </section>
+
+        <div class="main-tab-panel" style="margin-top: 10px;">
 
         <!-- Tab panel 1: Dashboard Analytics -->
         <div class="dashboard-charts-subgrid animate-fadeIn" id="tab-panel-analytics">
@@ -837,19 +957,15 @@
           </div>
         </article>
 
-      </section>
-
+        </div>
+      </div>
     </main>
-
   </div>
 
 
   <!-- =============================================================
        PHASE 3: MONEFY DRAWER NUMERICAL ENTRY PAD
        ============================================================= -->
-  <button class="fab-glowing-trigger" id="floatingAddBtn" type="button" aria-label="Log new entry">
-    <i data-lucide="plus"></i>
-  </button>
 
   <!-- Overlay backdrop -->
   <div class="numpad-drawer-overlay" id="numpadDrawerOverlay"></div>

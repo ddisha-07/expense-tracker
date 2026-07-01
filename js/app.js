@@ -320,9 +320,13 @@ function initOnboardingUI() {
   }
 
   // Synchronize onboarding initial balance
-  const obInitialBalance = document.getElementById('obInitialBalance');
-  if (obInitialBalance) {
-    obInitialBalance.value = state.initialBalance || 0;
+  const obStudentInitialBalance = document.getElementById('obStudentInitialBalance');
+  if (obStudentInitialBalance) {
+    obStudentInitialBalance.value = state.initialBalance || 0;
+  }
+  const obWorkingInitialBalance = document.getElementById('obWorkingInitialBalance');
+  if (obWorkingInitialBalance) {
+    obWorkingInitialBalance.value = state.initialBalance || 0;
   }
 
   // Synchronize onboarding grid selections
@@ -438,7 +442,7 @@ function updateOnboardingStepper() {
   });
 
   // Render correct Lifestyle Calibrator form conditional blocks
-  if (currentOnboardingStep === 3) {
+  if (currentOnboardingStep === 4) {
     const isStudent = (state.occupation === 'Student');
     const studentForm = document.getElementById('obStudentProfileForm');
     const workingForm = document.getElementById('obWorkingProfileForm');
@@ -657,7 +661,7 @@ function updateDynamicCurrencySymbolsAcrossApp() {
 }
 
 function onboardingStepNext() {
-  if (currentOnboardingStep === 3) {
+  if (currentOnboardingStep === 4) {
     const isStudent = (state.occupation === 'Student');
     let inflow = 0;
     let lifestyleProfile = {};
@@ -806,7 +810,8 @@ function completeOnboarding() {
     state.userName = 'Shekhar';
   }
 
-  const obInitialBalance = document.getElementById('obInitialBalance');
+  const isStudent = (state.occupation === 'Student');
+  const obInitialBalance = document.getElementById(isStudent ? 'obStudentInitialBalance' : 'obWorkingInitialBalance');
   if (obInitialBalance) {
     const val = parseFloat(obInitialBalance.value);
     state.initialBalance = isNaN(val) ? 0 : val;
@@ -2576,6 +2581,19 @@ function setupGlobalEventListeners() {
       const targetTab = e.currentTarget.dataset.tab;
       currentTab = targetTab;
 
+      // Update header view title
+      const viewTitle = document.getElementById('currentViewTitle');
+      if (viewTitle) {
+        const titles = {
+          analytics: 'Overview',
+          ledger: 'Transactions',
+          insights: 'Coach Hub',
+          budgets: 'YNAB Limits',
+          savings: 'Savings Vault'
+        };
+        viewTitle.innerText = titles[targetTab] || 'Dashboard';
+      }
+
       // Hide all panels, show target
       document.getElementById('tab-panel-analytics').style.display = 'none';
       document.getElementById('tab-panel-ledger').style.display = 'none';
@@ -2678,18 +2696,32 @@ function setupGlobalEventListeners() {
     });
   }
 
-  const obInitialBalance = document.getElementById('obInitialBalance');
-  if (obInitialBalance) {
-    obInitialBalance.addEventListener('input', (e) => {
+  const obStudentInitialBalance = document.getElementById('obStudentInitialBalance');
+  if (obStudentInitialBalance) {
+    obStudentInitialBalance.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      state.initialBalance = isNaN(val) ? 0 : val;
+      saveState();
+    });
+  }
+  const obWorkingInitialBalance = document.getElementById('obWorkingInitialBalance');
+  if (obWorkingInitialBalance) {
+    obWorkingInitialBalance.addEventListener('input', (e) => {
       const val = parseFloat(e.target.value);
       state.initialBalance = isNaN(val) ? 0 : val;
       saveState();
     });
   }
 
-  const obIncomeInput = document.getElementById('obIncomeInput');
-  if (obIncomeInput) {
-    obIncomeInput.addEventListener('input', () => {
+  const obStudentInflow = document.getElementById('obStudentInflow');
+  if (obStudentInflow) {
+    obStudentInflow.addEventListener('input', () => {
+      recalculateSuggestedBudgets();
+    });
+  }
+  const obWorkingInflow = document.getElementById('obWorkingInflow');
+  if (obWorkingInflow) {
+    obWorkingInflow.addEventListener('input', () => {
       recalculateSuggestedBudgets();
     });
   }
@@ -2867,7 +2899,7 @@ function setupGlobalEventListeners() {
   }
 
   // Settings Actions
-  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsBtn = document.getElementById('settingsBtn') || document.getElementById('sidebarSettingsBtn');
   const settingsOverlay = document.getElementById('settingsModalOverlay');
   const closeSettings = document.getElementById('closeSettingsBtn');
   const closeSettingsX = document.getElementById('closeSettingsXBtn');
@@ -4736,6 +4768,32 @@ function renderSavingsGrowthTrajectoryChart(timelineData, currentDiscretionarySa
 }
 
 function refreshDashboard() {
+  // Update header calendar date & greeting name dynamically
+  const dateLbl = document.getElementById('headerDateLabel');
+  if (dateLbl) {
+    const now = new Date();
+    const opt = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    dateLbl.innerText = now.toLocaleDateString('en-US', opt);
+  }
+
+  const greetName = document.getElementById('dashboardGreetingName');
+  if (greetName) {
+    const hours = new Date().getHours();
+    let timeGreeting = 'Good morning';
+    if (hours >= 12 && hours < 17) {
+      timeGreeting = 'Good afternoon';
+    } else if (hours >= 17 || hours < 4) {
+      timeGreeting = 'Good evening';
+    }
+    greetName.innerText = `${timeGreeting}, ${state.userName || 'Shekhar'} 👋`;
+  }
+
+  const transCount = document.getElementById('dashboardTransactionsCount');
+  if (transCount) {
+    const count = state.transactions.length;
+    transCount.innerText = `${count} transaction${count === 1 ? '' : 's'} logged`;
+  }
+
   const safeCall = (fn, label) => {
     try {
       fn();
@@ -4766,3 +4824,75 @@ function refreshDashboard() {
     safeCall(renderSavingsTab, 'renderSavingsTab');
   }
 }
+
+// =============================================================
+// FIGMA SIMULATED AUTHENTICATION & STUDENT EARNINGS HELPERS
+// =============================================================
+window.toggleAuthTab = function(tab) {
+  const signupBtn = document.getElementById('authTabSignup');
+  const loginBtn = document.getElementById('authTabLogin');
+  const subtitle = document.getElementById('authSubtitle');
+  if (signupBtn && loginBtn && subtitle) {
+    if (tab === 'signup') {
+      signupBtn.className = 'numpad-type-toggle-btn active';
+      signupBtn.style.background = '#00e87a';
+      signupBtn.style.color = '#080808';
+      loginBtn.className = 'numpad-type-toggle-btn';
+      loginBtn.style.background = 'transparent';
+      loginBtn.style.color = '#606060';
+      subtitle.innerText = 'Create your account';
+    } else {
+      loginBtn.className = 'numpad-type-toggle-btn active';
+      loginBtn.style.background = '#ff4757';
+      loginBtn.style.color = '#080808';
+      signupBtn.className = 'numpad-type-toggle-btn';
+      signupBtn.style.background = 'transparent';
+      signupBtn.style.color = '#606060';
+      subtitle.innerText = 'Welcome back';
+    }
+  }
+};
+
+window.setAuthMethod = function(method) {
+  const emailBtn = document.getElementById('authMethodEmail');
+  const phoneBtn = document.getElementById('authMethodPhone');
+  const emailFields = document.getElementById('authEmailFields');
+  const phoneFields = document.getElementById('authPhoneFields');
+  if (emailBtn && phoneBtn && emailFields && phoneFields) {
+    if (method === 'email') {
+      emailBtn.classList.add('selected');
+      phoneBtn.classList.remove('selected');
+      emailFields.style.display = 'block';
+      phoneFields.style.display = 'none';
+    } else {
+      phoneBtn.classList.add('selected');
+      emailBtn.classList.remove('selected');
+      phoneFields.style.display = 'block';
+      emailFields.style.display = 'none';
+    }
+  }
+};
+
+window.setStudentEarnings = function(earns) {
+  const yesBtn = document.getElementById('obStudentEarnsYes');
+  const noBtn = document.getElementById('obStudentEarnsNo');
+  const inflowLabel = document.getElementById('obStudentInflowLabel');
+  const inflowInput = document.getElementById('obStudentInflow');
+  const symbol = state.currencySymbol || '₹';
+  if (yesBtn && noBtn && inflowLabel && inflowInput) {
+    if (earns) {
+      yesBtn.classList.add('selected');
+      noBtn.classList.remove('selected');
+      inflowLabel.innerHTML = `Monthly Stipend / Part-time Income (<span class="currency-symbol-lbl">${symbol}</span>)`;
+      inflowInput.placeholder = '12,000';
+      inflowInput.value = '3000';
+    } else {
+      noBtn.classList.add('selected');
+      yesBtn.classList.remove('selected');
+      inflowLabel.innerHTML = `Monthly Allowance (<span class="currency-symbol-lbl">${symbol}</span>)`;
+      inflowInput.placeholder = '5,000';
+      inflowInput.value = '3000';
+    }
+    recalculateSuggestedBudgets();
+  }
+};
