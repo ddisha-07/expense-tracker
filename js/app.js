@@ -2753,6 +2753,34 @@ function setNumpadTypeToggle(type) {
 // GLOBAL ROUTERS & EVENT HANDLERS
 // -------------------------------------------------------------
 function setupGlobalEventListeners() {
+  // Mobile responsive sidebar toggle actions
+  const sidebar = document.querySelector('.sidebar');
+  const toggleBtn = document.getElementById('sidebarToggleBtn');
+  const closeBtn = document.getElementById('sidebarCloseBtn');
+  const sbOverlay = document.getElementById('sidebarOverlay');
+
+  const closeSidebar = () => {
+    if (sidebar && sbOverlay) {
+      sidebar.classList.remove('open');
+      sbOverlay.classList.remove('visible');
+    }
+  };
+
+  if (toggleBtn && sidebar && sbOverlay) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.add('open');
+      sbOverlay.classList.add('visible');
+    });
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+  if (sbOverlay) sbOverlay.addEventListener('click', closeSidebar);
+
+  // Close sidebar automatically on navigation click on mobile
+  document.querySelectorAll('.sidebar .tab-btn').forEach(btn => {
+    btn.addEventListener('click', closeSidebar);
+  });
+
   // Navigation Tabs lists toggles
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {

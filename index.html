@@ -513,9 +513,15 @@
        PHASE 2: INTERACTIVE SPENDEE-INSPIRED DASHBOARD VIEW
        ============================================================= -->
   <div class="dashboard-container" id="dashboardContainer">
+    
+    <!-- Sidebar mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Figma Glassmorphic Left Sidebar -->
     <aside class="sidebar">
+      <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">
+        <i data-lucide="x"></i>
+      </button>
       <div class="sidebar-logo">
         <span class="logo-x">X</span>penseo
       </div>
@@ -568,9 +574,14 @@
       
       <!-- Sticky header -->
       <header class="sticky-header">
-        <div>
-          <h1 class="view-title font-mono" id="currentViewTitle">Overview</h1>
-          <p class="current-date-lbl" id="headerDateLabel">Thursday, 2 July 2026</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button type="button" class="hamburger-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <h1 class="view-title font-mono" id="currentViewTitle">Overview</h1>
+            <p class="current-date-lbl" id="headerDateLabel">Thursday, 2 July 2026</p>
+          </div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
           <!-- Month Filter Selector -->

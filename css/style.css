@@ -3412,3 +3412,118 @@ select option {
   opacity: 0.95;
   cursor: pointer;
 }
+
+/* Hamburger button inside sticky header */
+.hamburger-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: none; /* Hidden on desktop by default */
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  border: 1px solid var(--border-color);
+}
+.hamburger-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sidebar-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.sidebar-close-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sidebar-overlay.visible {
+  display: block;
+  opacity: 1;
+}
+
+/* Responsive Media Query for Mobile/Tablet */
+@media (max-width: 768px) {
+  .hamburger-btn {
+    display: flex; /* Show hamburger button on mobile */
+  }
+  .sidebar-close-btn {
+    display: flex; /* Show sidebar close button inside sidebar on mobile */
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main-content-panel {
+    width: 100%;
+  }
+  .dashboard-container {
+    display: block; /* Avoid flex column sidebar spacing issues on mobile */
+  }
+  .dashboard-content-scroll {
+    padding: 16px;
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .sticky-header {
+    padding: 0 16px;
+  }
+  /* Make YNAB summary grid scrollable or stacked on mobile */
+  #catBudgetsSummary > div {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  /* Make stats container grid stacked on mobile */
+  .stats-container {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .main-tab-panel {
+    width: 100% !important;
+  }
+  .right-sidebar-panel {
+    width: 100% !important;
+  }
+}
