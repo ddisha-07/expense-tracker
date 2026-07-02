@@ -2066,7 +2066,8 @@ function setupSidebarBillDeleteListeners() {
 // -------------------------------------------------------------
 function renderCategoryBudgetsGrid() {
   const container = document.getElementById('catBudgetsGrid');
-  container.innerHTML = '';
+  const summaryContainer = document.getElementById('catBudgetsSummary');
+  if (!container) return;
 
   const now = new Date();
   const currentMonth = now.getMonth();
@@ -2078,14 +2079,70 @@ function renderCategoryBudgetsGrid() {
   });
 
   const categories = state.categories || Object.keys(state.categoryBudgets);
+  const symbol = state.currencySymbol || '₹';
+
+  // Calculate monthly income inflow limit
+  const isStudent = (state.occupation === 'Student');
+  let incomeInput = 0;
+  if (isStudent) {
+    const obStudentInflow = document.getElementById('obStudentInflow');
+    incomeInput = obStudentInflow ? (parseFloat(obStudentInflow.value) || 0) : 3000;
+  } else {
+    const obWorkingInflow = document.getElementById('obWorkingInflow');
+    incomeInput = obWorkingInflow ? (parseFloat(obWorkingInflow.value) || 0) : 50000;
+  }
+  if (incomeInput === 0) {
+    incomeInput = state.income || 3000;
+  }
+
+  // Calculate total allocated
+  let totalAllocated = 0;
   categories.forEach(cat => {
     let val = state.categoryBudgets[cat] || 0;
     if (val === 0) {
       val = getCategoryAllowance(cat);
       state.categoryBudgets[cat] = val;
-      saveState();
+    }
+    totalAllocated += val;
+  });
+  saveState();
+
+  // Render top YNAB allocations summary if container exists
+  if (summaryContainer) {
+    const unallocated = incomeInput - totalAllocated;
+    const allocatedPct = Math.round((totalAllocated / incomeInput) * 100) || 0;
+    
+    let unallocatedStatusHtml = '';
+    if (unallocated < 0) {
+      unallocatedStatusHtml = `<span style="color: #ff4757; font-weight: 800;">-${symbol}${Math.abs(unallocated).toLocaleString()} (Over-allocated)</span>`;
+    } else if (unallocated > 0) {
+      unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">${symbol}${unallocated.toLocaleString()} to allocate</span>`;
+    } else {
+      unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">Perfect Zero-Based!</span>`;
     }
 
+    summaryContainer.innerHTML = `
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        <div style="background: #111111; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; text-align: left;">
+          <div style="font-size: 9px; color: #606060; text-transform: uppercase; letter-spacing: 0.5px;">Monthly Inflow</div>
+          <div style="font-size: 16px; font-weight: 800; color: #f0f0f0; margin-top: 4px;">${symbol}${incomeInput.toLocaleString()}</div>
+        </div>
+        <div style="background: #111111; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; text-align: left;">
+          <div style="font-size: 9px; color: #606060; text-transform: uppercase; letter-spacing: 0.5px;">Allocated Budget</div>
+          <div style="font-size: 16px; font-weight: 800; color: #f0f0f0; margin-top: 4px;">${symbol}${totalAllocated.toLocaleString()} <span style="font-size: 10px; color: #606060; font-weight: 500;">(${allocatedPct}%)</span></div>
+        </div>
+        <div style="background: #111111; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; text-align: left;">
+          <div style="font-size: 9px; color: #606060; text-transform: uppercase; letter-spacing: 0.5px;">Remaining Headroom</div>
+          <div style="font-size: 14px; font-weight: 800; margin-top: 4px;">${unallocatedStatusHtml}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render categories grid
+  container.innerHTML = '';
+  categories.forEach(cat => {
+    const val = state.categoryBudgets[cat] || 0;
     const spent = monthlyExpenses.filter(t => t.category === cat).reduce((sum, t) => sum + t.amount, 0);
     const pct = Math.min(100, Math.round((spent / Math.max(1, val)) * 100));
 
@@ -2093,43 +2150,167 @@ function renderCategoryBudgetsGrid() {
     if (pct >= 90) barClr = 'bg-rose-500';
     else if (pct >= 75) barClr = 'bg-amber-500';
 
+    const remaining = val - spent;
+    let leftText = '';
+    let leftColor = 'text-zinc-500';
+    if (remaining < 0) {
+      leftText = `${symbol}${Math.abs(remaining).toLocaleString()} over budget`;
+      leftColor = 'text-[#ff4757]';
+    } else {
+      leftText = `${symbol}${remaining.toLocaleString()} left`;
+      leftColor = 'text-[#00e87a]';
+    }
+
     const card = document.createElement('div');
     card.className = 'cat-budget-card';
-    const symbol = state.currencySymbol || '₹';
+    card.style.padding = '18px 20px';
+    card.style.background = '#111111';
+    card.style.border = '1px solid var(--border-color)';
+    card.style.borderRadius = '16px';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.gap = '8px';
+
     card.innerHTML = `
-      <div class="cat-budget-header">
-        <span class="cat-budget-name text-zinc-200">${cat}</span>
-        <div class="cat-budget-input-wrapper">
-          <span class="cat-budget-limit-label">Limit:</span>
+      <div class="cat-budget-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <span class="cat-budget-name text-zinc-200" style="font-weight: 700; font-size: 13px;">${cat}</span>
+        <div class="cat-budget-input-wrapper" style="display: flex; align-items: center; gap: 4px; background: #1c1c1c; border: 1px solid var(--border-color); border-radius: 8px; padding: 2px 8px; height: 28px;">
+          <span class="cat-budget-limit-label" style="font-size: 10px; color: #606060; font-weight: 800;">${symbol}</span>
           <input 
             type="number" 
             value="${val}" 
             data-category="${cat}"
             class="cat-budget-input font-bold"
+            style="width: 55px; background: transparent; border: none; color: #f0f0f0; font-family: var(--font-family); font-size: 12px; outline: none; text-align: right; padding: 0;"
           />
         </div>
       </div>
-      <div class="cat-budget-details-row">
-        <span class="cat-budget-spent-txt">${symbol}${spent.toLocaleString()} spent</span>
-        <span class="cat-budget-util-txt">${pct}% utilized</span>
+
+      <div class="cat-budget-progress-track" style="background: #1c1c1c; border-radius: 6px; height: 6px; overflow: hidden; width: 100%; position: relative; margin-top: 4px;">
+        <div class="cat-budget-progress-bar ${barClr}" style="width: ${pct}%; height: 100%; transition: width 0.3s ease; border-radius: 6px;"></div>
       </div>
-      <div class="cat-budget-progress-track">
-        <div class="cat-budget-progress-bar ${barClr}" style="width: ${pct}%"></div>
+
+      <!-- User Friendly Slider -->
+      <div style="display: flex; align-items: center; width: 100%; margin-top: 4px;">
+        <input 
+          type="range" 
+          min="0" 
+          max="${Math.max(incomeInput, val, 1000)}" 
+          step="50"
+          value="${val}" 
+          data-category="${cat}"
+          class="cat-budget-slider"
+          style="flex: 1; accent-color: var(--accent-primary); background: #1c1c1c; border-radius: 4px; height: 4px; cursor: pointer; outline: none; transition: background 0.15s;"
+        />
+      </div>
+
+      <div class="cat-budget-details-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-top: 2px;">
+        <span class="cat-budget-spent-txt" style="color: #606060;">${symbol}${spent.toLocaleString()} spent</span>
+        <span class="cat-budget-remaining-txt ${leftColor}" style="font-weight: 700;">${leftText}</span>
       </div>
     `;
     container.appendChild(card);
   });
 
-  // Budget change event listener
+  // Bind change event to text inputs
   document.querySelectorAll('.cat-budget-input').forEach(input => {
     input.addEventListener('change', (e) => {
       const cat = e.target.dataset.category;
-      state.categoryBudgets[cat] = Math.max(0, parseInt(e.target.value) || 0);
+      const val = Math.max(0, parseInt(e.target.value) || 0);
+      state.categoryBudgets[cat] = val;
       saveState();
       renderCategoryBudgetsGrid();
       drawCategoryDonutSvg();
     });
   });
+
+  // Bind input event to sliders for live feedback
+  document.querySelectorAll('.cat-budget-slider').forEach(slider => {
+    slider.addEventListener('input', (e) => {
+      const cat = e.target.dataset.category;
+      const val = parseInt(e.target.value) || 0;
+      
+      // Update text input box instantly without re-rendering card
+      const textInput = document.querySelector(`.cat-budget-input[data-category="${cat}"]`);
+      if (textInput) textInput.value = val;
+
+      state.categoryBudgets[cat] = val;
+      saveState();
+
+      // Recalculate summary live
+      updateYnabSummaryLive(incomeInput, symbol);
+
+      // Update card details live (progress bar + left text)
+      updateYnabCardDetailsLive(cat, val, monthlyExpenses, symbol);
+    });
+
+    slider.addEventListener('change', () => {
+      // Trigger full rendering/donut refresh on slide release
+      renderCategoryBudgetsGrid();
+      drawCategoryDonutSvg();
+    });
+  });
+}
+
+function updateYnabSummaryLive(incomeInput, symbol) {
+  const summaryContainer = document.getElementById('catBudgetsSummary');
+  if (!summaryContainer) return;
+
+  const categories = state.categories || Object.keys(state.categoryBudgets);
+  let totalAllocated = 0;
+  categories.forEach(cat => {
+    totalAllocated += (state.categoryBudgets[cat] || 0);
+  });
+
+  const unallocated = incomeInput - totalAllocated;
+  const allocatedPct = Math.round((totalAllocated / incomeInput) * 100) || 0;
+  
+  let unallocatedStatusHtml = '';
+  if (unallocated < 0) {
+    unallocatedStatusHtml = `<span style="color: #ff4757; font-weight: 800;">-${symbol}${Math.abs(unallocated).toLocaleString()} (Over-allocated)</span>`;
+  } else if (unallocated > 0) {
+    unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">${symbol}${unallocated.toLocaleString()} to allocate</span>`;
+  } else {
+    unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">Perfect Zero-Based!</span>`;
+  }
+
+  const divs = summaryContainer.querySelectorAll('div > div');
+  if (divs.length === 3) {
+    divs[1].querySelector('div:last-child').innerHTML = `${symbol}${totalAllocated.toLocaleString()} <span style="font-size: 10px; color: #606060; font-weight: 500;">(${allocatedPct}%)</span>`;
+    divs[2].querySelector('div:last-child').innerHTML = unallocatedStatusHtml;
+  }
+}
+
+function updateYnabCardDetailsLive(cat, val, monthlyExpenses, symbol) {
+  const slider = document.querySelector(`.cat-budget-slider[data-category="${cat}"]`);
+  if (!slider) return;
+  const card = slider.closest('.cat-budget-card');
+  if (!card) return;
+
+  const spent = monthlyExpenses.filter(t => t.category === cat).reduce((sum, t) => sum + t.amount, 0);
+  const pct = Math.min(100, Math.round((spent / Math.max(1, val)) * 100));
+
+  // Update progress bar
+  const progressBar = card.querySelector('.cat-budget-progress-bar');
+  if (progressBar) {
+    progressBar.style.width = `${pct}%`;
+    progressBar.className = 'cat-budget-progress-bar bg-indigo-500';
+    if (pct >= 90) progressBar.className = 'cat-budget-progress-bar bg-rose-500';
+    else if (pct >= 75) progressBar.className = 'cat-budget-progress-bar bg-amber-500';
+  }
+
+  // Update remaining text
+  const remainingTxt = card.querySelector('.cat-budget-remaining-txt');
+  if (remainingTxt) {
+    const remaining = val - spent;
+    if (remaining < 0) {
+      remainingTxt.innerText = `${symbol}${Math.abs(remaining).toLocaleString()} over budget`;
+      remainingTxt.className = 'cat-budget-remaining-txt text-[#ff4757]';
+    } else {
+      remainingTxt.innerText = `${symbol}${remaining.toLocaleString()} left`;
+      remainingTxt.className = 'cat-budget-remaining-txt text-[#00e87a]';
+    }
+  }
 }
 
 // -------------------------------------------------------------
