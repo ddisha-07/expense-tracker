@@ -1207,11 +1207,11 @@
           </div>
         </fieldset>
 
-        <!-- SECTION 3: BACKUPS & SANDBOX CONTROL -->
+        <!-- SECTION 3: BACKUPS & DATA CONTROL -->
         <fieldset class="settings-section" style="margin-bottom: 0;">
           <legend class="settings-section-legend">
             <span class="section-num">3</span>
-            Backups & Sandbox Control
+            Backups & Data Control
           </legend>
 
           <div class="backup-cards-grid">
@@ -1221,11 +1221,11 @@
                 <i data-lucide="download"></i>
               </div>
               <div class="backup-card-details">
-                <h4 class="backup-card-title">Export Sandbox State</h4>
-                <p class="backup-card-desc">Download your local transactions & limits as a JSON file.</p>
+                <h4 class="backup-card-title">Backup Data</h4>
+                <p class="backup-card-desc">Download your transactions and budgets as a backup file.</p>
               </div>
               <button class="backup-card-action-btn" id="backupExportBtn" type="button">
-                Export DB
+                Save Backup
               </button>
             </div>
 
@@ -1235,11 +1235,11 @@
                 <i data-lucide="upload"></i>
               </div>
               <div class="backup-card-details">
-                <h4 class="backup-card-title">Import JSON Backup</h4>
-                <p class="backup-card-desc">Restore saved budgets, logs, and user profile data.</p>
+                <h4 class="backup-card-title">Restore Backup</h4>
+                <p class="backup-card-desc">Restore your transactions and budgets from a saved file.</p>
               </div>
               <button class="backup-card-action-btn" id="backupImportBtn" type="button">
-                Import DB
+                Load Backup
               </button>
               <input type="file" id="backupFileInput" accept=".json" style="display: none;">
             </div>
@@ -1250,11 +1250,11 @@
                 <i data-lucide="trash-2"></i>
               </div>
               <div class="backup-card-details">
-                <h4 class="backup-card-title text-rose-500">Format All Records</h4>
-                <p class="backup-card-desc">Wipe all logs, stipends, and configuration settings completely.</p>
+                <h4 class="backup-card-title text-rose-500">Wipe All Data</h4>
+                <p class="backup-card-desc">Delete all transactions, settings, and start fresh.</p>
               </div>
               <button class="backup-card-action-btn danger-btn" id="resetDataBtn" type="button">
-                Reset Data
+                Reset All
               </button>
             </div>
           </div>
