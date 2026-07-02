@@ -6,16 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO Optimization -->
-  <title>Xpenseo</title>
+  <title>Xpenseo | Premium Personal Budgeting</title>
   <meta name="description"
     content="Xpenseo is a premium, student-focused expense tracker. Quickly record expenses, manage YNAB-inspired budgets, organization fixed commitments, and secure backups completely privately.">
   <meta name="author" content="Xpenseo Team">
   <meta name="theme-color" content="#070a13">
 
   <link rel="stylesheet" href="css/style.css?v=20260602">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2247%22 y=%2212%22 width=%226%22 height=%2276%22 rx=%223%22 fill=%22%2300e87a%22 /><path d=%22M 68,32 C 68,18 32,18 32,34 C 32,48 68,52 68,66 C 68,82 32,82 32,68%22 fill=%22none%22 stroke=%22%2300e87a%22 stroke-width=%2210%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 /><path d=%22M 25,75 C 30,60 45,45 68,32%22 fill=%22none%22 stroke=%22%2300e87a%22 stroke-width=%2210%22 stroke-linecap=%22round%22 /><polygon points=%2278,22 56,26 68,44%22 fill=%22%2300e87a%22 /></svg>">
 </head>
 
 <body>
+
+  <!-- Reusable SVG Logo Symbol definition -->
+  <svg style="display: none;">
+    <symbol id="logoSvgSymbol" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="logoGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#a855f7" />
+          <stop offset="50%" stop-color="#2563eb" />
+          <stop offset="100%" stop-color="#00e87a" />
+        </linearGradient>
+      </defs>
+      <rect x="47" y="12" width="6" height="76" rx="3" fill="url(#logoGrad)" />
+      <path d="M 68,32 C 68,18 32,18 32,34 C 32,48 68,52 68,66 C 68,82 32,82 32,68" fill="none" stroke="url(#logoGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 25,75 C 30,60 45,45 68,32" fill="none" stroke="url(#logoGrad)" stroke-width="10" stroke-linecap="round" />
+      <polygon points="78,22 56,26 68,44" fill="url(#logoGrad)" />
+    </symbol>
+  </svg>
 
   <!-- Temporary Error Capture overlay -->
   <script>
@@ -67,9 +85,12 @@
 
           <!-- Slide 1: Welcome Screen -->
           <div class="onboarding-slide active" id="slide-1">
-            <div class="logo-container" style="text-align: center; margin-top: 10px;">
-              <span class="font-mono text-4xl font-bold text-[#f0f0f0]" style="font-size: 36px; font-family: var(--font-family); letter-spacing: -1px;">
-                <span class="text-[#00e87a]">X</span>penseo
+            <div class="logo-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; margin-bottom: 12px;">
+              <svg viewBox="0 0 100 100" style="width: 56px; height: 56px; filter: drop-shadow(0 0 16px rgba(0, 232, 122, 0.3));">
+                <use href="#logoSvgSymbol" />
+              </svg>
+              <span class="font-mono text-4xl font-bold text-[#f0f0f0]" style="font-size: 32px; font-family: var(--font-family); letter-spacing: -1px;">
+                <span style="color: #00e87a;">X</span>penseo
               </span>
             </div>
             <p class="tagline font-mono text-base text-[#606060] mt-2 mb-6" style="text-align: center; font-size: 13px; font-family: var(--font-family); margin-bottom: 20px;">Track smart. Spend smarter.</p>
@@ -112,11 +133,13 @@
           <!-- Slide 2: Simulated Authentication -->
           <div class="onboarding-slide" id="slide-2">
             <div>
-              <div class="logo-container text-center mb-4" style="text-align: center; margin-bottom: 16px;">
-                <span class="font-mono text-2xl font-bold text-[#f0f0f0]">
-                  <span class="text-[#00e87a]">X</span>penseo
+              <div class="logo-container text-center mb-4" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                <svg viewBox="0 0 100 100" style="width: 22px; height: 22px; filter: drop-shadow(0 0 8px rgba(0, 232, 122, 0.25));">
+                  <use href="#logoSvgSymbol" />
+                </svg>
+                <span class="font-mono text-2xl font-bold text-[#f0f0f0]" style="font-family: var(--font-family);">
+                  <span style="color: #00e87a;">X</span>penseo
                 </span>
-                <p class="text-[#606060] text-xs mt-1" id="authSubtitle">Create your account</p>
               </div>
               
               <!-- Tab switchers SignUp/SignIn -->
@@ -175,11 +198,13 @@
           <!-- Slide 3: Profile Setup -->
           <div class="onboarding-slide" id="slide-3">
             <div>
-              <div class="logo-container text-center mb-3" style="text-align: center; margin-bottom: 12px;">
-                <span class="font-mono text-xl font-bold text-[#f0f0f0]">
-                  <span class="text-[#00e87a]">X</span>penseo
+              <div class="logo-container text-center mb-3" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                <svg viewBox="0 0 100 100" style="width: 20px; height: 20px; filter: drop-shadow(0 0 8px rgba(0, 232, 122, 0.25));">
+                  <use href="#logoSvgSymbol" />
+                </svg>
+                <span class="font-mono text-xl font-bold text-[#f0f0f0]" style="font-family: var(--font-family);">
+                  <span style="color: #00e87a;">X</span>penseo
                 </span>
-                <p class="text-[#606060] text-xs mt-1">Let's set up your profile</p>
               </div>
 
               <h2 class="slide-title text-zinc-100" style="font-size: 16px; margin-bottom: 2px;">Who are you?</h2>
@@ -522,8 +547,13 @@
       <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">
         <i data-lucide="x"></i>
       </button>
-      <div class="sidebar-logo">
-        <span class="logo-x">X</span>penseo
+      <div class="sidebar-logo" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+        <svg viewBox="0 0 100 100" style="width: 26px; height: 26px; flex-shrink: 0; filter: drop-shadow(0 0 10px rgba(0, 232, 122, 0.3));">
+          <use href="#logoSvgSymbol" />
+        </svg>
+        <span class="font-mono text-xl font-bold text-[#f0f0f0]" style="font-family: var(--font-family); letter-spacing: -0.5px;">
+          <span style="color: #00e87a;">X</span>penseo
+        </span>
       </div>
       <nav class="sidebar-nav">
         <button class="tab-btn active" data-tab="analytics" type="button">
