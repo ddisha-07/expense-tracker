@@ -3089,6 +3089,10 @@ function setupGlobalEventListeners() {
     if (settingsOverlay) {
       settingsOverlay.classList.add('open');
       // Load values into settings inputs
+      const uNameInput = document.getElementById('stUserName');
+      if (uNameInput) {
+        uNameInput.value = state.userName || 'Shekhar';
+      }
       document.getElementById('stIncomeVal').value = state.income;
       document.getElementById('stInitialBalanceVal').value = state.initialBalance || 0;
       document.getElementById('stBudgetVal').value = state.budgetValue;
@@ -3158,10 +3162,15 @@ function setupGlobalEventListeners() {
     const initialBalVal = parseFloat(document.getElementById('stInitialBalanceVal').value) || 0;
     const limitVal = parseFloat(document.getElementById('stBudgetVal').value);
     const typeVal = document.getElementById('stBudgetType').value;
+    const uNameInput = document.getElementById('stUserName');
 
     if (isNaN(incVal) || incVal <= 0 || isNaN(limitVal) || limitVal <= 0) {
       showToast('Values must be greater than zero.', 'error');
       return;
+    }
+
+    if (uNameInput && uNameInput.value.trim()) {
+      state.userName = uNameInput.value.trim();
     }
 
     state.income = incVal;
@@ -4949,6 +4958,17 @@ function renderSavingsGrowthTrajectoryChart(timelineData, currentDiscretionarySa
 }
 
 function refreshDashboard() {
+  // Update Left Sidebar profile details
+  const sbName = document.getElementById('sidebarProfileName');
+  const sbAvatar = document.getElementById('sidebarAvatar');
+  if (sbName) {
+    sbName.innerText = state.userName || 'Shekhar';
+  }
+  if (sbAvatar) {
+    const name = state.userName || 'Shekhar';
+    sbAvatar.innerText = name.charAt(0).toUpperCase();
+  }
+
   // Update header calendar date & greeting name dynamically
   const dateLbl = document.getElementById('headerDateLabel');
   if (dateLbl) {
