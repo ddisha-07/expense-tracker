@@ -978,6 +978,22 @@ body {
   grid-column: span 4;
 }
 
+/* Dynamic Sidebar view states */
+.dashboard-content-scroll.full-width .main-tab-panel {
+  grid-column: span 12;
+}
+.dashboard-content-scroll.full-width .right-sidebar-panel {
+  display: none;
+}
+
+/* Charts Split Grid */
+.charts-split-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.1fr;
+  gap: 20px;
+  width: 100%;
+}
+
 /* Dashboard Analytics Grid */
 .dashboard-charts-subgrid {
   display: flex;
@@ -3525,5 +3541,8 @@ select option {
   }
   .right-sidebar-panel {
     width: 100% !important;
+  }
+  .charts-split-grid {
+    grid-template-columns: 1fr !important;
   }
 }

@@ -1100,35 +1100,58 @@ function renderDashboardStats() {
 
   const totalSpent = monthlyExpensesList.reduce((sum, t) => sum + t.amount, 0);
   const totalIncome = getMonthlyIncome(filterYear, filterMonth);
-  const remainingBalance = state.income - totalSpent;
+  const netBalance = totalIncome - totalSpent;
 
   const symbol = state.currencySymbol || '₹';
 
-  // Render cards
-  document.getElementById('dashTotalIncome').innerText = `${symbol}${totalIncome.toLocaleString()}`;
-  document.getElementById('dashTotalExpenses').innerText = `${symbol}${totalSpent.toLocaleString()}`;
-
-  const balEl = document.getElementById('dashTotalBalance');
-  if (balEl) {
-    balEl.innerText = `${symbol}${remainingBalance.toLocaleString()}`;
-    if (remainingBalance < 0) {
-      balEl.className = 'stat-value text-rose-500';
+  // Render Net Balance card
+  const netEl = document.getElementById('dashNetBalance');
+  if (netEl) {
+    netEl.innerText = `${symbol}${netBalance.toLocaleString()}`;
+    if (netBalance < 0) {
+      netEl.style.color = '#ff4757';
     } else {
-      balEl.className = 'stat-value text-zinc-100 dark:text-zinc-100';
+      netEl.style.color = '#00e87a';
     }
   }
 
-  // Render Account Balance card
-  const accEl = document.getElementById('dashAccountBalance');
-  if (accEl) {
-    const accountBalance = (state.initialBalance || 0) + totalIncome - totalSpent;
-    accEl.innerText = `${symbol}${accountBalance.toLocaleString()}`;
-    if (accountBalance < 0) {
-      accEl.className = 'stat-value text-rose-500';
+  // Render Total Income card
+  const incEl = document.getElementById('dashTotalIncome');
+  if (incEl) {
+    incEl.innerText = `${symbol}${totalIncome.toLocaleString()}`;
+    incEl.style.color = '#00e87a';
+  }
+
+  // Render Total Expenses card
+  const expEl = document.getElementById('dashTotalExpenses');
+  if (expEl) {
+    expEl.innerText = `${symbol}${totalSpent.toLocaleString()}`;
+    expEl.style.color = '#ff4757';
+  }
+
+  // Render Savings Rate card
+  const savingsRate = totalIncome > 0 ? Math.round((totalIncome - totalSpent) / totalIncome * 100) : 0;
+  const savEl = document.getElementById('dashSavingsRate');
+  const savSubEl = document.getElementById('dashSavingsRateSubtext');
+  if (savEl) {
+    savEl.innerText = `${savingsRate}%`;
+    if (savingsRate >= 20) {
+      savEl.style.color = '#00e87a';
+      if (savSubEl) {
+        savSubEl.innerText = 'Great job!';
+        savSubEl.style.color = '#00e87a';
+      }
     } else {
-      accEl.className = 'stat-value text-zinc-100 dark:text-zinc-100';
+      savEl.style.color = '#eab308';
+      if (savSubEl) {
+        savSubEl.innerText = 'Room to improve';
+        savSubEl.style.color = '#eab308';
+      }
     }
   }
+
+  // Render recent transactions feed on Overview
+  renderRecentTransactionsList();
 
   // Calculate current limits progress (kept with safety checks)
   const metricLabelEl = document.getElementById('budgetMetricLabel');
@@ -1194,6 +1217,93 @@ function drawAllSvgCharts() {
   drawTrendLineSvg();
   drawWeekdayAveragesSvg();
   drawRecurringPaymentsChart();
+}
+
+function renderRecentTransactionsList() {
+  const container = document.getElementById('dashRecentTransactionsList');
+  const countLbl = document.getElementById('dashRecentTransactionsCount');
+  if (!container) return;
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const monthlyTransactions = state.transactions.filter(t => {
+    const d = new Date(t.date);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+
+  if (countLbl) {
+    countLbl.innerText = `${monthlyTransactions.length} entries this month`;
+  }
+
+  // Get recent 8 items
+  const recent = state.transactions.slice(0, 8);
+  container.innerHTML = '';
+
+  if (recent.length === 0) {
+    container.innerHTML = `<p style="font-size: 11px; color: #606060; text-align: center; padding: 20px 0; font-family: var(--font-family);">No transactions logged yet.</p>`;
+    return;
+  }
+
+  const symbol = state.currencySymbol || '₹';
+  const categoryIcons = {
+    Food: '🍔',
+    Transport: '🚗',
+    Shopping: '🛍️',
+    Entertainment: '🎬',
+    Education: '📚',
+    Health: '🏥',
+    Bills: '💵',
+    Other: '💳'
+  };
+
+  recent.forEach(tx => {
+    const icon = categoryIcons[tx.category] || '💳';
+    const amountVal = Math.abs(tx.amount);
+    const amountText = (tx.type === 'income' ? '+' : '−') + symbol + amountVal.toLocaleString();
+    const amountColor = tx.type === 'income' ? 'color: #00e87a;' : 'color: #f0f0f0;';
+    const typeLabel = tx.type === 'income' ? 'Credit' : 'Debit';
+    const typeColor = tx.type === 'income' ? 'color: rgba(0, 232, 122, 0.6);' : 'color: #606060;';
+    const typeIcon = tx.type === 'income' ? '↑' : '↓';
+
+    const item = document.createElement('div');
+    item.className = 'recent-tx-item';
+    item.style.display = 'flex';
+    item.style.alignItems = 'center';
+    item.style.gap = '16px';
+    item.style.padding = '12px';
+    item.style.borderRadius = '12px';
+    item.style.transition = 'background-color 0.2s';
+    item.style.cursor = 'pointer';
+
+    item.innerHTML = `
+      <div class="tx-icon" style="width: 40px; height: 40px; border-radius: 12px; background: #161616; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">${icon}</div>
+      <div style="flex: 1; min-width: 0;">
+        <p style="font-size: 13px; font-weight: 600; color: #f0f0f0; margin: 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-family: var(--font-family);">${tx.title}</p>
+        <p style="font-size: 11px; color: #606060; margin: 2px 0 0 0; font-family: var(--font-family);">${tx.category} · ${tx.date}</p>
+      </div>
+      <div style="text-align: right; flex-shrink: 0;">
+        <p style="font-weight: 700; font-size: 13px; margin: 0; ${amountColor}">${amountText}</p>
+        <p style="font-size: 10px; ${typeColor} margin: 2px 0 0 0; display: flex; align-items: center; justify-content: flex-end; gap: 2px; font-family: var(--font-family);">
+          <span>${typeIcon}</span> ${typeLabel}
+        </p>
+      </div>
+    `;
+
+    // Make items hoverable
+    item.addEventListener('mouseenter', () => item.style.backgroundColor = '#161616');
+    item.addEventListener('mouseleave', () => item.style.backgroundColor = 'transparent');
+    
+    // Clicking opens details/edit
+    item.addEventListener('click', () => {
+      if (typeof openNumpadDrawer === 'function') {
+        openNumpadDrawer(false, tx);
+      }
+    });
+
+    container.appendChild(item);
+  });
 }
 
 function drawRecurringPaymentsChart() {
@@ -2790,6 +2900,16 @@ function setupGlobalEventListeners() {
       const targetTab = e.currentTarget.dataset.tab;
       currentTab = targetTab;
 
+      // Update full-width state of container to control right sidebar visibility
+      const scrollContainer = document.querySelector('.dashboard-content-scroll');
+      if (scrollContainer) {
+        if (targetTab === 'budgets') {
+          scrollContainer.classList.remove('full-width');
+        } else {
+          scrollContainer.classList.add('full-width');
+        }
+      }
+
       // Update header view title
       const viewTitle = document.getElementById('currentViewTitle');
       if (viewTitle) {
@@ -2830,6 +2950,17 @@ function setupGlobalEventListeners() {
       }
     });
   });
+
+  // View All button redirect to Ledger
+  const viewAllBtn = document.getElementById('dashViewAllBtn');
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', () => {
+      const ledgerTabBtn = document.querySelector('.tab-btn[data-tab="ledger"]');
+      if (ledgerTabBtn) {
+        ledgerTabBtn.click();
+      }
+    });
+  }
 
   // Stepper Slider button binds
   const startBtn = document.getElementById('obStartBtn');
