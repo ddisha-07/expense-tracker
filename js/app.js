@@ -2891,8 +2891,15 @@ function setupGlobalEventListeners() {
 
   if (toggleBtn && sidebar && sbOverlay) {
     toggleBtn.addEventListener('click', () => {
-      sidebar.classList.add('open');
-      sbOverlay.classList.add('visible');
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('open');
+        sbOverlay.classList.add('visible');
+      } else {
+        const container = document.querySelector('.dashboard-container');
+        if (container) {
+          container.classList.toggle('sidebar-collapsed');
+        }
+      }
     });
   }
 
@@ -3734,10 +3741,10 @@ function renderSidebarProfileCard() {
   if (brandGreeting) {
     const uName = getFirstName(state.userName);
     const greetings = {
-      Student: `Hey ${uName}! Ready to tackle your campus budget? 🎓`,
-      Working: `Welcome back, ${uName}! Maximizing your hard-earned funds. 💼`,
-      Freelancer: `Hello ${uName}! Managing flexible gig contract cashflows? 🚀`,
-      Other: `Hi ${uName}! Keeping your sandbox budgets perfectly tuned. 🌟`
+      Student: `Hey ${uName}! Ready to tackle your campus budget?`,
+      Working: `Welcome back, ${uName}! Maximizing your hard-earned funds.`,
+      Freelancer: `Hello ${uName}! Managing flexible gig contract cashflows?`,
+      Other: `Hi ${uName}! Keeping your sandbox budgets perfectly tuned.`
     };
     brandGreeting.innerText = greetings[occupation] || `"Track less. Understand more."`;
   }
@@ -5158,7 +5165,7 @@ function refreshDashboard() {
     } else if (hours >= 17 || hours < 4) {
       timeGreeting = 'Good evening';
     }
-    greetName.innerText = `${timeGreeting}, ${getFirstName(state.userName)} 👋`;
+    greetName.innerText = `${timeGreeting}, ${getFirstName(state.userName)}`;
   }
 
   const transCount = document.getElementById('dashboardTransactionsCount');

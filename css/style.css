@@ -3435,7 +3435,7 @@ select option {
   border: none;
   color: var(--text-primary);
   cursor: pointer;
-  display: none; /* Hidden on desktop by default */
+  display: flex; /* Visible on all screen sizes to toggle the sidebar */
   align-items: center;
   justify-content: center;
   width: 36px;
@@ -3544,5 +3544,15 @@ select option {
   }
   .charts-split-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* Collapsible Desktop Sidebar styles */
+@media (min-width: 769px) {
+  .sidebar {
+    transition: margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dashboard-container.sidebar-collapsed .sidebar {
+    margin-left: -240px;
   }
 }
