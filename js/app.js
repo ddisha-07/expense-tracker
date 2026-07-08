@@ -57,7 +57,8 @@ let state = {
   occupation: 'Student',
   savingsGoalActive: false,
   savingsGoalTitle: '',
-  savingsGoalTarget: 0
+  savingsGoalTarget: 0,
+  events: []
 };
 
 // Global variables
@@ -173,6 +174,9 @@ function loadState() {
         if (parsed.savingsGoalTitle !== undefined && typeof parsed.savingsGoalTitle === 'string') state.savingsGoalTitle = parsed.savingsGoalTitle;
         if (parsed.savingsGoalTarget !== undefined && !isNaN(Number(parsed.savingsGoalTarget))) state.savingsGoalTarget = Number(parsed.savingsGoalTarget);
         if (parsed.initialBalance !== undefined && !isNaN(Number(parsed.initialBalance))) state.initialBalance = Number(parsed.initialBalance);
+        if (parsed.events !== undefined && Array.isArray(parsed.events)) {
+          state.events = parsed.events.filter(e => e && typeof e === 'object' && e.id);
+        }
       }
     } catch (e) {
       console.error('Error parsing localStorage state', e);
@@ -189,6 +193,9 @@ function loadState() {
   }
   if (!Array.isArray(state.transactions)) {
     state.transactions = [];
+  }
+  if (!Array.isArray(state.events)) {
+    state.events = [];
   }
   if (typeof state.categoryBudgets !== 'object' || state.categoryBudgets === null) {
     state.categoryBudgets = {
@@ -2706,6 +2713,10 @@ async function handleNumpadSubmit() {
   const dateVal = document.getElementById('numpadDate').value;
   const payMethodVal = document.getElementById('numpadPayMethod').value;
   const noteVal = document.getElementById('numpadNote').value.trim();
+  
+  // Read linked event selection
+  const eventLinkSelect = document.getElementById('numpadEventLink');
+  const eventLinkVal = eventLinkSelect ? eventLinkSelect.value : '';
 
   if (editingTransactionId) {
     // Edit existing transaction in-place
@@ -2720,6 +2731,13 @@ async function handleNumpadSubmit() {
       tx.date = dateVal;
       tx.payMethod = payMethodVal || 'Card';
       tx.description = noteVal || 'Logged via Monefy Rapid Entry Pad';
+      
+      // Update event link association
+      if (eventLinkVal) {
+        tx.eventId = eventLinkVal;
+      } else {
+        delete tx.eventId;
+      }
 
       // Two-way synchronization for fixed commitment transaction
       if (editingTransactionId.startsWith('tx-fixed-')) {
@@ -2754,6 +2772,10 @@ async function handleNumpadSubmit() {
       description: noteVal || 'Logged via Monefy Rapid Entry Pad'
     };
 
+    if (eventLinkVal) {
+      newTx.eventId = eventLinkVal;
+    }
+
     state.transactions.unshift(newTx);
     saveState();
     closeNumpadDrawer();
@@ -2763,7 +2785,7 @@ async function handleNumpadSubmit() {
   }
 }
 
-function openNumpadDrawer(isPast = false, txToEdit = null) {
+function openNumpadDrawer(isPast = false, txToEdit = null, preSelectedEventId = null) {
   const overlay = document.getElementById('numpadDrawerOverlay');
   const panel = document.getElementById('numpadDrawerPanel');
   const fab = document.getElementById('floatingAddBtn');
@@ -2775,6 +2797,20 @@ function openNumpadDrawer(isPast = false, txToEdit = null) {
   const drawerHeader = document.querySelector('.numpad-drawer-header h3');
   const submitBtn = document.getElementById('numpadSubmitBtn');
 
+  // Populate dynamic event link dropdown options
+  const eventLinkSelect = document.getElementById('numpadEventLink');
+  if (eventLinkSelect) {
+    eventLinkSelect.innerHTML = '<option value="">None</option>';
+    if (state.events && Array.isArray(state.events)) {
+      state.events.forEach(evt => {
+        const opt = document.createElement('option');
+        opt.value = evt.id;
+        opt.innerText = evt.name;
+        eventLinkSelect.appendChild(opt);
+      });
+    }
+  }
+
   if (txToEdit) {
     editingTransactionId = txToEdit.id;
 
@@ -2785,6 +2821,10 @@ function openNumpadDrawer(isPast = false, txToEdit = null) {
     document.getElementById('numpadDate').value = txToEdit.date;
     document.getElementById('numpadPayMethod').value = txToEdit.payMethod || 'Card';
     document.getElementById('numpadNote').value = (txToEdit.description === 'Logged via Monefy Rapid Entry Pad') ? '' : (txToEdit.description || '');
+
+    if (eventLinkSelect) {
+      eventLinkSelect.value = txToEdit.eventId || '';
+    }
 
     setNumpadTypeToggle(txToEdit.type);
     setNumpadCategorySelection(txToEdit.category);
@@ -2805,6 +2845,10 @@ function openNumpadDrawer(isPast = false, txToEdit = null) {
     document.getElementById('numpadPayMethod').value = 'Card';
     document.getElementById('numpadNote').value = '';
     
+    if (eventLinkSelect) {
+      eventLinkSelect.value = preSelectedEventId || '';
+    }
+
     setNumpadTypeToggle('expense');
     setNumpadCategorySelection(state.categories && state.categories.length > 0 ? state.categories[0] : 'Food');
 
@@ -2938,7 +2982,8 @@ function setupGlobalEventListeners() {
           ledger: 'Transactions',
           insights: 'Coach Hub',
           budgets: 'YNAB Limits',
-          savings: 'Savings Vault'
+          savings: 'Savings Vault',
+          events: 'Event Tracker'
         };
         viewTitle.innerText = titles[targetTab] || 'Dashboard';
       }
@@ -2950,6 +2995,8 @@ function setupGlobalEventListeners() {
       document.getElementById('tab-panel-budgets').style.display = 'none';
       const savingsPanel = document.getElementById('tab-panel-savings');
       if (savingsPanel) savingsPanel.style.display = 'none';
+      const eventsPanel = document.getElementById('tab-panel-events');
+      if (eventsPanel) eventsPanel.style.display = 'none';
 
       if (targetTab === 'analytics') {
         document.getElementById('tab-panel-analytics').style.display = 'flex';
@@ -2967,6 +3014,9 @@ function setupGlobalEventListeners() {
       } else if (targetTab === 'savings') {
         if (savingsPanel) savingsPanel.style.display = 'flex';
         renderSavingsTab();
+      } else if (targetTab === 'events') {
+        if (eventsPanel) eventsPanel.style.display = 'flex';
+        renderEventsTab();
       }
     });
   });
@@ -3588,6 +3638,12 @@ function setupGlobalEventListeners() {
       refreshDashboard();
       showToast(`Savings Dream "${title}" locked! Target: ${state.currencySymbol || '₹'}${targetVal.toLocaleString()}`, 'success');
     });
+  }
+
+  // Event Tracker Create Trigger
+  const createEventBtn = document.getElementById('createNewEventBtn');
+  if (createEventBtn) {
+    createEventBtn.addEventListener('click', createNewEventTracker);
   }
 }
 
@@ -5136,6 +5192,160 @@ function renderSavingsGrowthTrajectoryChart(timelineData, currentDiscretionarySa
   }
 }
 
+function renderEventsTab() {
+  const grid = document.getElementById('eventsContainerGrid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  if (!state.events || state.events.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: span 12; text-align: center; color: #606060; padding: 40px 0; font-family: var(--font-family); width: 100%;">
+        <i data-lucide="tags" style="width: 32px; height: 32px; opacity: 0.3; margin: 0 auto 12px auto; display: block;"></i>
+        <p style="font-size: 13px; font-weight: 600; margin: 0;">No Event Trackers configured.</p>
+        <p style="font-size: 11px; margin: 4px 0 0 0;">Click "Create Event Tracker" to group your trip or party expenses!</p>
+      </div>
+    `;
+    lucide.createIcons();
+    return;
+  }
+
+  const symbol = state.currencySymbol || '₹';
+
+  state.events.forEach(evt => {
+    // Find all transactions linked to this event
+    const linkedTx = state.transactions.filter(t => t.eventId === evt.id);
+    const totalSpent = linkedTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const totalIncome = linkedTx.filter(t => t.type === 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    
+    // Net spent on this event (expenses - incomes linked)
+    const netSpent = totalSpent - totalIncome;
+    
+    const budget = evt.budget || 0;
+    const percent = budget > 0 ? Math.min(100, Math.round((netSpent / budget) * 100)) : 0;
+    const remaining = budget - netSpent;
+
+    // Color code based on budget threshold
+    let progressColor = '#00e87a'; // Green
+    if (percent >= 100) {
+      progressColor = '#ff4757'; // Red
+    } else if (percent >= 80) {
+      progressColor = '#eab308'; // Amber/Yellow
+    }
+
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    card.innerHTML = `
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: start; gap: 8px;">
+          <div>
+            <h4 style="font-size: 13px; font-weight: 700; color: #f0f0f0; margin: 0; font-family: var(--font-family);">${evt.name}</h4>
+            <p style="font-size: 10px; color: #606060; margin: 4px 0 0 0; font-family: var(--font-family);">${evt.desc || 'No description provided'}</p>
+          </div>
+          <span style="font-size: 11px; font-weight: 700; color: ${progressColor}; font-family: var(--font-family);">
+            ${percent}%
+          </span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="event-progress-bar">
+          <div class="event-progress-fill" style="width: ${percent}%; background-color: ${progressColor};"></div>
+        </div>
+
+        <!-- Budget labels -->
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #888888; font-family: var(--font-family); margin-top: 6px;">
+          <span>Spent: ${symbol}${netSpent.toLocaleString()}</span>
+          <span>Budget: ${symbol}${budget.toLocaleString()}</span>
+        </div>
+
+        <div style="font-size: 9px; color: ${remaining >= 0 ? '#606060' : '#ff4757'}; font-family: var(--font-family); margin-top: 4px; text-align: right;">
+          ${remaining >= 0 ? `Remaining: ${symbol}${remaining.toLocaleString()}` : `Over budget by: ${symbol}${Math.abs(remaining).toLocaleString()}`}
+        </div>
+
+        <!-- List of recent transactions linked to this event -->
+        <div class="event-tx-mini-list" style="margin-top: 14px; display: flex; flex-direction: column; gap: 4px; max-height: 100px; overflow-y: auto;">
+          ${linkedTx.length === 0 ? `
+            <p style="font-size: 9px; color: #606060; margin: 0; font-style: italic;">No linked transactions</p>
+          ` : linkedTx.slice(0, 3).map(tx => `
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #f0f0f0; font-family: var(--font-family); padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">${tx.title}</span>
+              <span style="font-weight: 700; color: ${tx.type === 'income' ? '#00e87a' : '#ff4757'};">${tx.type === 'income' ? '+' : '−'}${symbol}${Math.abs(tx.amount)}</span>
+            </div>
+          `).join('')}
+          ${linkedTx.length > 3 ? `<p style="font-size: 8px; color: #606060; margin: 2px 0 0 0; text-align: right;">+${linkedTx.length - 3} more entries</p>` : ''}
+        </div>
+      </div>
+
+      <div class="event-card-actions">
+        <button class="event-action-btn delete" data-id="${evt.id}" type="button">
+          <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
+          Delete
+        </button>
+        <button class="event-action-btn add" data-id="${evt.id}" type="button">
+          <i data-lucide="plus-circle" style="width: 12px; height: 12px;"></i>
+          Add Spends
+        </button>
+      </div>
+    `;
+
+    // Delete event tracker
+    card.querySelector('.event-action-btn.delete').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (confirm(`Are you sure you want to delete the "${evt.name}" event tracker? Transactions linked to this event will not be deleted.`)) {
+        deleteEventTracker(evt.id);
+      }
+    });
+
+    // Add transaction linked to this event
+    card.querySelector('.event-action-btn.add').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openNumpadDrawer(true, null, evt.id);
+    });
+
+    grid.appendChild(card);
+  });
+
+  lucide.createIcons();
+}
+
+function createNewEventTracker() {
+  const name = prompt("Enter Event Name (e.g. Goa Trip 2026, Birthday Party):");
+  if (!name || !name.trim()) return;
+  
+  const budgetStr = prompt("Enter Target Budget limit (₹):", "5000");
+  if (budgetStr === null) return;
+  const budget = parseFloat(budgetStr.replace(/[^0-9.]/g, '')) || 0;
+  
+  const desc = prompt("Enter short description (optional):") || "";
+
+  const newEvent = {
+    id: 'evt-' + Date.now(),
+    name: name.trim(),
+    budget: budget,
+    desc: desc.trim()
+  };
+
+  if (!state.events) state.events = [];
+  state.events.push(newEvent);
+  saveState();
+  renderEventsTab();
+  showToast(`Event tracker "${name}" created!`, 'success');
+}
+
+function deleteEventTracker(eventId) {
+  state.events = state.events.filter(e => e.id !== eventId);
+  
+  state.transactions.forEach(t => {
+    if (t.eventId === eventId) {
+      delete t.eventId;
+    }
+  });
+
+  saveState();
+  renderEventsTab();
+  showToast('Event tracker deleted successfully.', 'info');
+}
+
 function refreshDashboard() {
   // Update Left Sidebar profile details
   const sbName = document.getElementById('sidebarProfileName');
@@ -5202,6 +5412,8 @@ function refreshDashboard() {
     safeCall(drawAllSvgCharts, 'drawAllSvgCharts');
   } else if (currentTab === 'savings') {
     safeCall(renderSavingsTab, 'renderSavingsTab');
+  } else if (currentTab === 'events') {
+    safeCall(renderEventsTab, 'renderEventsTab');
   }
 }
 

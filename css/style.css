@@ -3574,3 +3574,75 @@ select option {
     margin-left: -240px;
   }
 }
+
+/* Event Tracker Card Styles */
+.event-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  position: relative;
+  transition: border-color 0.2s, transform 0.2s;
+  box-sizing: border-box;
+}
+
+.event-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.event-progress-bar {
+  height: 6px;
+  background: #1c1c1c;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 12px 0 6px 0;
+  width: 100%;
+}
+
+.event-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.event-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.event-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+  outline: none;
+  padding: 0;
+}
+
+.event-action-btn:hover {
+  color: var(--text-primary);
+}
+
+.event-action-btn.delete:hover {
+  color: var(--accent-secondary);
+}
+
+.event-action-btn.add:hover {
+  color: var(--accent-primary);
+}

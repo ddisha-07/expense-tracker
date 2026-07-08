@@ -574,6 +574,10 @@
           <i data-lucide="piggy-bank" class="w-4 h-4"></i>
           Budget
         </button>
+        <button class="tab-btn" data-tab="events" type="button">
+          <i data-lucide="tags" class="w-4 h-4"></i>
+          Event Tracker
+        </button>
         <button class="tab-btn" id="sidebarSettingsBtn" type="button">
           <i data-lucide="settings" class="w-4 h-4"></i>
           Settings
@@ -881,8 +885,30 @@
               <!-- Injected by app.js -->
             </div>
           </div>
+        </div>
 
-      </section>
+        <!-- Tab panel 5: Trips & Events Tracker -->
+        <div class="events-tab-panel animate-fadeIn" id="tab-panel-events" style="display: none; width: 100%;">
+          <div class="glass-panel" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 15px; font-weight: 700; margin: 0;">Event Budgets</h3>
+                <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Track and group spends for specific trips, parties, or themes</span>
+              </div>
+              <button class="primary-btn" id="createNewEventBtn" type="button" style="background: #00e87a; color: #080808; border: none; font-weight: 700; border-radius: 10px; height: 34px; font-size: 11px; padding: 0 16px; font-family: var(--font-family); display: flex; align-items: center; gap: 6px; cursor: pointer; outline: none;">
+                <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                Create Event Tracker
+              </button>
+            </div>
+
+            <!-- List of events grid -->
+            <div id="eventsContainerGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; width: 100%;">
+              <!-- Injected dynamically by app.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
 
       <!-- Sidebar checklist column (Col 4) -->
       <section class="right-sidebar-panel">
@@ -1066,6 +1092,15 @@
         <input class="st-input-box font-semibold" id="numpadNote" type="text" placeholder="Coffee with Shekhar, etc..."
           style="padding-left: 12px; border-radius: 12px; font-size: 11px; height: 38px;">
       </div>
+    </div>
+
+    <!-- Event Link dropdown (Optional) -->
+    <div class="mb-4">
+      <label class="input-label-tag" for="numpadEventLink">Event Link (Optional)</label>
+      <select class="st-input-box font-semibold" id="numpadEventLink"
+        style="padding-left: 12px; border-radius: 12px; font-size: 11px; height: 38px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>&quot;); background-repeat: no-repeat; background-position: right 12px center; background-size: 10px; padding-right: 24px; width: 100%; border: 1px solid var(--border-color); background-color: var(--bg-input); color: var(--text-primary);">
+        <option value="">None</option>
+      </select>
     </div>
 
     <!-- Keyboard Pad overlay -->
