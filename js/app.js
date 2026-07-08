@@ -5526,7 +5526,7 @@ function renderEventsTab() {
     <h4 style="font-size: 13px; font-weight: 700; color: #ffffff; margin: 0; font-family: var(--font-family);">New Collection</h4>
     <p style="font-size: 10px; color: #606060; margin: 4px 0 0 0; font-family: var(--font-family);">Track a trip, event, or project</p>
   `;
-  dashedCard.addEventListener('click', createNewEventTracker);
+  dashedCard.addEventListener('click', openNewCollectionModal);
 
   grid.appendChild(dashedCard);
   lucide.createIcons();
