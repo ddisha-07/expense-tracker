@@ -3442,6 +3442,20 @@ function setupGlobalEventListeners() {
     });
   }
 
+  // New Collection Form & Modal Listeners
+  const closeNewCollectionX = document.getElementById('closeNewCollectionModalBtn');
+  if (closeNewCollectionX) closeNewCollectionX.addEventListener('click', closeNewCollectionModal);
+
+  const newCollectionOverlay = document.getElementById('newCollectionModalOverlay');
+  if (newCollectionOverlay) {
+    newCollectionOverlay.addEventListener('click', (e) => {
+      if (e.target === newCollectionOverlay) closeNewCollectionModal();
+    });
+  }
+
+  const newCollectionForm = document.getElementById('newCollectionForm');
+  if (newCollectionForm) newCollectionForm.addEventListener('submit', handleNewCollectionSubmit);
+
   const logoutRemember = document.getElementById('logoutRememberBtn');
   if (logoutRemember) logoutRemember.addEventListener('click', () => executeLogout('remember'));
 
@@ -5517,38 +5531,118 @@ function renderEventsTab() {
 }
 
 function createNewEventTracker() {
-  const name = prompt("Enter Collection Name (e.g. Goa Trip 2026, Home Renovation):");
-  if (!name || !name.trim()) return;
-  
-  const budgetStr = prompt("Enter Target Budget limit (₹):", "5000");
-  if (budgetStr === null) return;
-  const budget = parseFloat(budgetStr.replace(/[^0-9.]/g, '')) || 0;
-  
-  const desc = prompt("Enter short description (optional):") || "";
-  const emoji = prompt("Enter Emoji icon (optional):", "🎉") || "🎉";
-  const dateRange = prompt("Enter Date Range (e.g. 2026-07-15 ➔ 2026-07-20) (optional):") || new Date().toISOString().split('T')[0];
+  openNewCollectionModal();
+}
 
-  // Automatic theme color cycle
-  const colors = ['#3b82f6', '#f97316', '#ef4444', '#10b981', '#a855f7'];
-  const activeIdx = (state.events ? state.events.length : 0) % colors.length;
-  const color = colors[activeIdx];
+function openNewCollectionModal() {
+  const overlay = document.getElementById('newCollectionModalOverlay');
+  if (!overlay) return;
+
+  const nameInput = document.getElementById('newCollectionName');
+  const descInput = document.getElementById('newCollectionDesc');
+  const budgetInput = document.getElementById('newCollectionBudget');
+  const startInput = document.getElementById('newCollectionStartDate');
+  const endInput = document.getElementById('newCollectionEndDate');
+
+  if (nameInput) nameInput.value = '';
+  if (descInput) descInput.value = '';
+  if (budgetInput) budgetInput.value = 0;
+
+  const today = new Date().toISOString().split('T')[0];
+  if (startInput) startInput.value = today;
+  if (endInput) endInput.value = today;
+
+  // Render Emojis grid
+  const emojis = ['🏖️', '🏡', '🎉', '✈️', '🎓', '💍', '🏕️', '🎸', '🏋️', '🍽️', '🛒', '💼', '🎄', '🏥', '📚', '🚗'];
+  const emojiGrid = document.getElementById('newCollectionEmojiGrid');
+  const selectedEmojiInput = document.getElementById('newCollectionSelectedEmoji');
+  
+  if (emojiGrid && selectedEmojiInput) {
+    emojiGrid.innerHTML = '';
+    selectedEmojiInput.value = emojis[0];
+    emojis.forEach((em, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `emoji-circle-btn ${idx === 0 ? 'selected' : ''}`;
+      btn.innerText = em;
+      btn.addEventListener('click', () => {
+        emojiGrid.querySelectorAll('.emoji-circle-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedEmojiInput.value = em;
+      });
+      emojiGrid.appendChild(btn);
+    });
+  }
+
+  // Render accent colorsSelector
+  const colors = ['#00e87a', '#3b82f6', '#f97316', '#a855f7', '#eab308', '#ec4899', '#06b6d4', '#ef4444'];
+  const colorGrid = document.getElementById('newCollectionColorGrid');
+  const selectedColorInput = document.getElementById('newCollectionSelectedColor');
+
+  if (colorGrid && selectedColorInput) {
+    colorGrid.innerHTML = '';
+    selectedColorInput.value = colors[0];
+    colors.forEach((col, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `color-circle-btn ${idx === 0 ? 'selected' : ''}`;
+      btn.style.backgroundColor = col;
+      btn.addEventListener('click', () => {
+        colorGrid.querySelectorAll('.color-circle-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedColorInput.value = col;
+      });
+      colorGrid.appendChild(btn);
+    });
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeNewCollectionModal() {
+  const overlay = document.getElementById('newCollectionModalOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function handleNewCollectionSubmit(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById('newCollectionName').value.trim();
+  const desc = document.getElementById('newCollectionDesc').value.trim();
+  const budget = parseFloat(document.getElementById('newCollectionBudget').value) || 0;
+  const start = document.getElementById('newCollectionStartDate').value;
+  const end = document.getElementById('newCollectionEndDate').value;
+  
+  const emoji = document.getElementById('newCollectionSelectedEmoji').value;
+  const color = document.getElementById('newCollectionSelectedColor').value;
+
+  let dateRange = '';
+  if (start && end) {
+    dateRange = start === end ? start : `${start} ➔ ${end}`;
+  } else if (start) {
+    dateRange = start;
+  } else {
+    dateRange = 'No target date range';
+  }
 
   const newEvent = {
     id: 'evt-' + Date.now(),
-    name: name.trim(),
+    name: name,
     budget: budget,
-    desc: desc.trim(),
-    emoji: emoji.trim(),
-    dateRange: dateRange.trim(),
+    desc: desc,
+    emoji: emoji,
+    dateRange: dateRange,
     color: color
   };
 
   if (!state.events) state.events = [];
   state.events.push(newEvent);
+  
   saveState();
   refreshDashboard();
   renderEventsTab();
-  showToast(`Collection "${newEvent.name}" created!`, 'success');
+  closeNewCollectionModal();
+  showToast(`Collection "${name}" created successfully!`, 'success');
 }
 
 function deleteEventTracker(eventId) {

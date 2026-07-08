@@ -3727,3 +3727,66 @@ select option {
 .event-action-btn.add:hover {
   color: var(--accent-primary);
 }
+
+/* Emoji Selection Grid Styles */
+.emoji-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.emoji-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: border-color 0.2s, background-color 0.2s, transform 0.1s;
+  padding: 0;
+}
+
+.emoji-circle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.emoji-circle-btn.selected {
+  border-color: var(--accent-primary) !important;
+  background: rgba(0, 232, 122, 0.08) !important;
+  transform: scale(1.08);
+}
+
+/* Accent Color Selection Row Styles */
+.color-selector-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.color-circle-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.color-circle-btn:hover {
+  transform: scale(1.15);
+}
+
+.color-circle-btn.selected {
+  border-color: #ffffff !important;
+  transform: scale(1.15);
+}
