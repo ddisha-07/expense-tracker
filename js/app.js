@@ -5153,7 +5153,7 @@ function refreshDashboard() {
   if (dateLbl) {
     const now = new Date();
     const opt = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    dateLbl.innerText = now.toLocaleDateString('en-US', opt);
+    dateLbl.innerText = now.toLocaleDateString('en-IN', opt);
   }
 
   const greetName = document.getElementById('dashboardGreetingName');
