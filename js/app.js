@@ -3310,9 +3310,6 @@ function setupGlobalEventListeners() {
   const logoutForget = document.getElementById('logoutForgetBtn');
   if (logoutForget) logoutForget.addEventListener('click', () => executeLogout('forget'));
 
-  const logoutWithBackup = document.getElementById('logoutWithBackupBtn');
-  if (logoutWithBackup) logoutWithBackup.addEventListener('click', () => executeLogout('backup'));
-
   // Calendar Past-Logger Action
   const navCalendarBtn = document.getElementById('navCalendarBtn');
   if (navCalendarBtn) {
