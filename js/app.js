@@ -117,6 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // -------------------------------------------------------------
+// HELPER: Extract first name, skipping single-character initials (e.g., "D" in "D Disha Shree")
+function getFirstName(fullName) {
+  if (!fullName) return 'Shekhar';
+  const parts = fullName.trim().split(/\s+/);
+  for (const part of parts) {
+    const clean = part.replace(/[^a-zA-Z]/g, '');
+    if (clean.length > 1) {
+      return part;
+    }
+  }
+  return parts[0] || 'Shekhar';
+}
+
 // STATE STORAGE
 // -------------------------------------------------------------
 function saveState() {
@@ -2585,7 +2598,7 @@ function renderSmartInsightsList() {
       insights.push({
         id: 'ins-ob-5',
         title: 'Student Discounts Notice',
-        desc: `${state.userName || 'Shekhar'}, you are on a Student Profile! Always ask for active student discount cards at local transit or food chains.`,
+        desc: `${getFirstName(state.userName)}, you are on a Student Profile! Always ask for active student discount cards at local transit or food chains.`,
         type: 'success',
         icon: 'tag'
       });
@@ -3719,7 +3732,7 @@ function renderSidebarProfileCard() {
 
   // 1. Dynamic navbar hero greetings
   if (brandGreeting) {
-    const uName = state.userName || 'Shekhar';
+    const uName = getFirstName(state.userName);
     const greetings = {
       Student: `Hey ${uName}! Ready to tackle your campus budget? 🎓`,
       Working: `Welcome back, ${uName}! Maximizing your hard-earned funds. 💼`,
@@ -5145,7 +5158,7 @@ function refreshDashboard() {
     } else if (hours >= 17 || hours < 4) {
       timeGreeting = 'Good evening';
     }
-    greetName.innerText = `${timeGreeting}, ${state.userName || 'Shekhar'} 👋`;
+    greetName.innerText = `${timeGreeting}, ${getFirstName(state.userName)} 👋`;
   }
 
   const transCount = document.getElementById('dashboardTransactionsCount');
