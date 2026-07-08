@@ -135,6 +135,10 @@ function getFirstName(fullName) {
 // -------------------------------------------------------------
 function saveState() {
   localStorage.setItem('montra_student_state', JSON.stringify(state));
+  if (state.userId || state.userName) {
+    const key = `montra_user_state_${(state.userId || state.userName).toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+    localStorage.setItem(key, JSON.stringify(state));
+  }
 }
 
 function loadState() {
@@ -681,6 +685,52 @@ function updateDynamicCurrencySymbolsAcrossApp() {
 }
 
 function onboardingStepNext() {
+  if (currentOnboardingStep === 2) {
+    const isLogin = document.getElementById('authTabLogin').classList.contains('active');
+    const isEmail = document.getElementById('authMethodEmail').classList.contains('selected');
+    const emailVal = document.getElementById('authEmailInput').value.trim();
+    const phoneVal = document.getElementById('authPhoneInput').value.trim();
+    
+    const authId = isEmail ? emailVal : phoneVal;
+    
+    if (!authId) {
+      showToast(`Please enter your ${isEmail ? 'email address' : 'phone number'} to continue`, 'warning');
+      return;
+    }
+    
+    // Store userId in global state
+    state.userId = authId;
+
+    if (isLogin) {
+      // Sign In mode: Check if saved user record exists
+      const key = `montra_user_state_${authId.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            // Load the user's saved state
+            state = parsed;
+            state.onboardingCompleted = true; // Ensure they bypass onboarding
+            saveState();
+            
+            // Load dashboard
+            showDashboardView();
+            refreshDashboard();
+            
+            showToast(`Welcome back, ${getFirstName(state.userName)}! Loaded your saved workspace.`, 'success');
+            return; // Halt onboarding stepper transition!
+          }
+        } catch (e) {
+          console.error('Error loading saved user state', e);
+        }
+      } else {
+        showToast(`No saved workspace found for "${authId}". Let's set one up!`, 'info');
+        // Proceed to sign up / profile creation
+      }
+    }
+  }
+
   if (currentOnboardingStep === 4) {
     const isStudent = (state.occupation === 'Student');
     let inflow = 0;
@@ -916,9 +966,22 @@ function closeLogoutModal() {
   }
 }
 
-function executeLogout(saveBackup = false) {
-  if (saveBackup) {
+function executeLogout(mode) {
+  if (mode === 'backup') {
     handleExportBackup();
+  }
+
+  const activeKey = state.userId || state.userName || 'default';
+  const storageKey = `montra_user_state_${activeKey.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+  if (mode === 'forget') {
+    // Forget: Wipe user storage key completely
+    localStorage.removeItem(storageKey);
+    showToast('Session logged out and workspace deleted completely.', 'info');
+  } else {
+    // Remember: Save state to user key before resetting
+    localStorage.setItem(storageKey, JSON.stringify(state));
+    showToast('Session logged out. Your workspace has been saved locally.', 'success');
   }
 
   // Format state completely back to initial factory defaults for a clean setup wizard refresh
@@ -947,12 +1010,14 @@ function executeLogout(saveBackup = false) {
     onboardingCompleted: false,
     currencySymbol: '₹',
     occupation: 'Student',
-    userName: 'Shekhar'
+    userName: 'Shekhar',
+    events: []
   };
-  saveState();
+
+  // Remove active session key so next load prompts onboarding
+  localStorage.removeItem('montra_student_state');
 
   closeLogoutModal();
-  showToast('Logged out. Setup wizard has been fully refreshed.', 'info');
   showOnboardingView();
   initOnboardingUI();
 }
@@ -3239,11 +3304,14 @@ function setupGlobalEventListeners() {
   const logoutCancel = document.getElementById('logoutCancelBtn');
   if (logoutCancel) logoutCancel.addEventListener('click', closeLogoutModal);
 
-  const logoutWithBackup = document.getElementById('logoutWithBackupBtn');
-  if (logoutWithBackup) logoutWithBackup.addEventListener('click', () => executeLogout(true));
+  const logoutRemember = document.getElementById('logoutRememberBtn');
+  if (logoutRemember) logoutRemember.addEventListener('click', () => executeLogout('remember'));
 
-  const logoutWithoutBackup = document.getElementById('logoutWithoutBackupBtn');
-  if (logoutWithoutBackup) logoutWithoutBackup.addEventListener('click', () => executeLogout(false));
+  const logoutForget = document.getElementById('logoutForgetBtn');
+  if (logoutForget) logoutForget.addEventListener('click', () => executeLogout('forget'));
+
+  const logoutWithBackup = document.getElementById('logoutWithBackupBtn');
+  if (logoutWithBackup) logoutWithBackup.addEventListener('click', () => executeLogout('backup'));
 
   // Calendar Past-Logger Action
   const navCalendarBtn = document.getElementById('navCalendarBtn');
