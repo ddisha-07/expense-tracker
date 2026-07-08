@@ -201,6 +201,133 @@ function loadState() {
   if (!Array.isArray(state.events)) {
     state.events = [];
   }
+  if (state.events.length === 0) {
+    state.events = [
+      {
+        id: 'evt-goa-trip',
+        name: 'Goa Trip 2026',
+        desc: 'Annual beach getaway with friends',
+        budget: 35000,
+        dateRange: '2026-07-15 ➔ 2026-07-20',
+        color: '#3b82f6',
+        emoji: '🏖️'
+      },
+      {
+        id: 'evt-home-reno',
+        name: 'Home Renovation',
+        desc: 'Bedroom & kitchen makeover',
+        budget: 150000,
+        dateRange: '2026-06-01 ➔ 2026-08-31',
+        color: '#f97316',
+        emoji: '🏡'
+      },
+      {
+        id: 'evt-office-farewell',
+        name: 'Office Farewell — Meera',
+        desc: 'Farewell party planning & expenses',
+        budget: 8000,
+        dateRange: '2026-07-08',
+        color: '#ef4444',
+        emoji: '🎉'
+      }
+    ];
+
+    const mockTx = [
+      {
+        id: 'tx-mock-goa-1',
+        title: 'Flight Ticket Booking',
+        amount: 15550,
+        type: 'expense',
+        category: 'Transport',
+        date: '2026-07-01',
+        payMethod: 'Card',
+        description: 'Flight tickets to Goa and back',
+        eventId: 'evt-goa-trip'
+      },
+      {
+        id: 'tx-mock-goa-2',
+        title: 'Airbnb Beach Villa Stay',
+        amount: 7000,
+        type: 'expense',
+        category: 'Rent/Hostel',
+        date: '2026-07-02',
+        payMethod: 'Card',
+        description: 'Stay booking deposit',
+        eventId: 'evt-goa-trip'
+      },
+      {
+        id: 'tx-mock-goa-3',
+        title: 'Friends Contributions Pool',
+        amount: 15000,
+        type: 'income',
+        category: 'Other',
+        date: '2026-07-03',
+        payMethod: 'UPI',
+        description: 'Group cash pool deposit',
+        eventId: 'evt-goa-trip'
+      },
+      {
+        id: 'tx-mock-reno-1',
+        title: 'Kitchen Granite Countertop',
+        amount: 65000,
+        type: 'expense',
+        category: 'Shopping',
+        date: '2026-06-15',
+        payMethod: 'Bank',
+        description: 'Italian marble countertop slab',
+        eventId: 'evt-home-reno'
+      },
+      {
+        id: 'tx-mock-reno-2',
+        title: 'Bedroom Wardrobe Plywood',
+        amount: 26000,
+        type: 'expense',
+        category: 'Shopping',
+        date: '2026-06-18',
+        payMethod: 'Card',
+        description: 'High grade commercial wood sheets',
+        eventId: 'evt-home-reno'
+      },
+      {
+        id: 'tx-mock-reno-3',
+        title: 'Store Cash Rebate Reward',
+        amount: 5000,
+        type: 'income',
+        category: 'Other',
+        date: '2026-06-20',
+        payMethod: 'Bank',
+        description: 'Cashback reward credit',
+        eventId: 'evt-home-reno'
+      },
+      {
+        id: 'tx-mock-farewell-1',
+        title: 'Catering & Drinks Supplies',
+        amount: 7500,
+        type: 'expense',
+        category: 'Food',
+        date: '2026-07-08',
+        payMethod: 'UPI',
+        description: 'Starters and main buffet booking',
+        eventId: 'evt-office-farewell'
+      },
+      {
+        id: 'tx-mock-farewell-2',
+        title: 'Office Pool Contributions',
+        amount: 7500,
+        type: 'income',
+        category: 'Other',
+        date: '2026-07-08',
+        payMethod: 'UPI',
+        description: 'Office budget contribution deposit',
+        eventId: 'evt-office-farewell'
+      }
+    ];
+
+    if (!Array.isArray(state.transactions)) {
+      state.transactions = [];
+    }
+    state.transactions.push(...mockTx);
+  }
   if (typeof state.categoryBudgets !== 'object' || state.categoryBudgets === null) {
     state.categoryBudgets = {
       Food: 300,
@@ -3048,7 +3175,7 @@ function setupGlobalEventListeners() {
           insights: 'Coach Hub',
           budgets: 'YNAB Limits',
           savings: 'Savings Vault',
-          events: 'Event Tracker'
+          events: 'Collections'
         };
         viewTitle.innerText = titles[targetTab] || 'Dashboard';
       }
@@ -3303,6 +3430,17 @@ function setupGlobalEventListeners() {
 
   const logoutCancel = document.getElementById('logoutCancelBtn');
   if (logoutCancel) logoutCancel.addEventListener('click', closeLogoutModal);
+
+  // Collections Sheet Close Handlers
+  const closeCollectionSheetX = document.getElementById('closeCollectionSheetXBtn');
+  if (closeCollectionSheetX) closeCollectionSheetX.addEventListener('click', closeCollectionSheet);
+
+  const collectionOverlay = document.getElementById('collectionSheetOverlay');
+  if (collectionOverlay) {
+    collectionOverlay.addEventListener('click', (e) => {
+      if (e.target === collectionOverlay) closeCollectionSheet();
+    });
+  }
 
   const logoutRemember = document.getElementById('logoutRememberBtn');
   if (logoutRemember) logoutRemember.addEventListener('click', () => executeLogout('remember'));
@@ -5263,118 +5401,123 @@ function renderEventsTab() {
 
   grid.innerHTML = '';
 
-  if (!state.events || state.events.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: span 12; text-align: center; color: #606060; padding: 40px 0; font-family: var(--font-family); width: 100%;">
-        <i data-lucide="tags" style="width: 32px; height: 32px; opacity: 0.3; margin: 0 auto 12px auto; display: block;"></i>
-        <p style="font-size: 13px; font-weight: 600; margin: 0;">No Event Trackers configured.</p>
-        <p style="font-size: 11px; margin: 4px 0 0 0;">Click "Create Event Tracker" to group your trip or party expenses!</p>
-      </div>
-    `;
-    lucide.createIcons();
-    return;
+  const symbol = state.currencySymbol || '₹';
+  const formatNumberK = (num) => {
+    if (num >= 1000) {
+      const kVal = num / 1000;
+      return Number.isInteger(kVal) ? kVal + 'k' : kVal.toFixed(1) + 'k';
+    }
+    return num;
+  };
+
+  // Render active collection cards
+  if (state.events && state.events.length > 0) {
+    state.events.forEach(evt => {
+      const linkedTx = state.transactions.filter(t => t.eventId === evt.id);
+      const totalSpent = linkedTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+      const totalIncome = linkedTx.filter(t => t.type === 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+      
+      const budget = evt.budget || 0;
+      const percent = budget > 0 ? Math.min(100, Math.round((totalSpent / budget) * 100)) : 0;
+      const remaining = budget - totalSpent;
+
+      const card = document.createElement('div');
+      card.className = 'event-card cursor-pointer';
+      
+      card.innerHTML = `
+        <div>
+          <!-- Top section: emoji & titles -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div class="collection-emoji-wrapper">${evt.emoji || '🏖️'}</div>
+            <div style="text-align: left;">
+              <h4 style="font-size: 13px; font-weight: 700; color: #ffffff; margin: 0; font-family: var(--font-family);">${evt.name}</h4>
+              <p style="font-size: 10px; color: #606060; margin: 2px 0 0 0; font-family: var(--font-family);">${evt.desc || 'No description'}</p>
+            </div>
+          </div>
+
+          <!-- Target date range with Calendar range icon -->
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; color: #606060; font-family: var(--font-family); margin-bottom: 16px;">
+            <i data-lucide="calendar" style="width: 12px; height: 12px;"></i>
+            <span>${evt.dateRange || 'No target date range'}</span>
+          </div>
+
+          <!-- Spent details and progress bar -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; font-family: var(--font-family);">
+            <span style="font-size: 11px; color: #888888; font-weight: 600;">
+              <strong style="color: #ffffff; font-weight: 800;">${symbol}${totalSpent.toLocaleString()}</strong> spent
+            </span>
+            <span style="font-size: 11px; font-weight: 800; color: ${evt.color || '#3b82f6'};">
+              ${percent}%
+            </span>
+          </div>
+
+          <!-- Progress Bar Outer -->
+          <div class="event-progress-bar" style="margin: 0 0 16px 0;">
+            <div class="event-progress-fill" style="width: ${percent}%; background-color: ${evt.color || '#3b82f6'};"></div>
+          </div>
+
+          <!-- Three Metrics grid (Budget, Inflow, Left) -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: left; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.03);">
+            <div>
+              <span style="font-size: 9px; color: #606060; font-weight: 700; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-family);">Budget</span>
+              <span style="font-size: 12px; font-weight: 800; color: #f0f0f0; font-family: var(--font-family); margin-top: 4px; display: block;">${symbol}${formatNumberK(budget)}</span>
+            </div>
+            <div>
+              <span style="font-size: 9px; color: #606060; font-weight: 700; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-family);">Inflow</span>
+              <span style="font-size: 12px; font-weight: 800; color: #00e87a; font-family: var(--font-family); margin-top: 4px; display: block;">+${totalIncome.toLocaleString()}</span>
+            </div>
+            <div>
+              <span style="font-size: 9px; color: #606060; font-weight: 700; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-family);">Left</span>
+              <span style="font-size: 12px; font-weight: 800; color: #ffffff; font-family: var(--font-family); margin-top: 4px; display: block;">${symbol}${remaining.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card footer: Entries count and Open sheet action link -->
+        <div class="event-card-actions" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.03);">
+          <span style="font-size: 10px; color: #606060; font-family: var(--font-family); font-weight: 600;">${linkedTx.length} entries</span>
+          <button class="event-action-btn open-sheet-link" data-id="${evt.id}" type="button" style="color: ${evt.color || '#3b82f6'} !important; display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800;">
+            Open sheet ➔
+          </button>
+        </div>
+      `;
+
+      // Bind card clicking to open the sheet
+      card.addEventListener('click', (e) => {
+        openCollectionSheet(evt.id);
+      });
+
+      // Bind button explicitly as well
+      const link = card.querySelector('.open-sheet-link');
+      if (link) {
+        link.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openCollectionSheet(evt.id);
+        });
+      }
+
+      grid.appendChild(card);
+    });
   }
 
-  const symbol = state.currencySymbol || '₹';
+  // Append the custom Dashed "New Collection" card at the end of the grid!
+  const dashedCard = document.createElement('div');
+  dashedCard.className = 'new-collection-dashed-card';
+  dashedCard.innerHTML = `
+    <div class="new-collection-plus-icon">
+      <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+    </div>
+    <h4 style="font-size: 13px; font-weight: 700; color: #ffffff; margin: 0; font-family: var(--font-family);">New Collection</h4>
+    <p style="font-size: 10px; color: #606060; margin: 4px 0 0 0; font-family: var(--font-family);">Track a trip, event, or project</p>
+  `;
+  dashedCard.addEventListener('click', createNewEventTracker);
 
-  state.events.forEach(evt => {
-    // Find all transactions linked to this event
-    const linkedTx = state.transactions.filter(t => t.eventId === evt.id);
-    const totalSpent = linkedTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-    const totalIncome = linkedTx.filter(t => t.type === 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-    
-    // Net spent on this event (expenses - incomes linked)
-    const netSpent = totalSpent - totalIncome;
-    
-    const budget = evt.budget || 0;
-    const percent = budget > 0 ? Math.min(100, Math.round((netSpent / budget) * 100)) : 0;
-    const remaining = budget - netSpent;
-
-    // Color code based on budget threshold
-    let progressColor = '#00e87a'; // Green
-    if (percent >= 100) {
-      progressColor = '#ff4757'; // Red
-    } else if (percent >= 80) {
-      progressColor = '#eab308'; // Amber/Yellow
-    }
-
-    const card = document.createElement('div');
-    card.className = 'event-card';
-    card.innerHTML = `
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: start; gap: 8px;">
-          <div>
-            <h4 style="font-size: 13px; font-weight: 700; color: #f0f0f0; margin: 0; font-family: var(--font-family);">${evt.name}</h4>
-            <p style="font-size: 10px; color: #606060; margin: 4px 0 0 0; font-family: var(--font-family);">${evt.desc || 'No description provided'}</p>
-          </div>
-          <span style="font-size: 11px; font-weight: 700; color: ${progressColor}; font-family: var(--font-family);">
-            ${percent}%
-          </span>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="event-progress-bar">
-          <div class="event-progress-fill" style="width: ${percent}%; background-color: ${progressColor};"></div>
-        </div>
-
-        <!-- Budget labels -->
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #888888; font-family: var(--font-family); margin-top: 6px;">
-          <span>Spent: ${symbol}${netSpent.toLocaleString()}</span>
-          <span>Budget: ${symbol}${budget.toLocaleString()}</span>
-        </div>
-
-        <div style="font-size: 9px; color: ${remaining >= 0 ? '#606060' : '#ff4757'}; font-family: var(--font-family); margin-top: 4px; text-align: right;">
-          ${remaining >= 0 ? `Remaining: ${symbol}${remaining.toLocaleString()}` : `Over budget by: ${symbol}${Math.abs(remaining).toLocaleString()}`}
-        </div>
-
-        <!-- List of recent transactions linked to this event -->
-        <div class="event-tx-mini-list" style="margin-top: 14px; display: flex; flex-direction: column; gap: 4px; max-height: 100px; overflow-y: auto;">
-          ${linkedTx.length === 0 ? `
-            <p style="font-size: 9px; color: #606060; margin: 0; font-style: italic;">No linked transactions</p>
-          ` : linkedTx.slice(0, 3).map(tx => `
-            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #f0f0f0; font-family: var(--font-family); padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">${tx.title}</span>
-              <span style="font-weight: 700; color: ${tx.type === 'income' ? '#00e87a' : '#ff4757'};">${tx.type === 'income' ? '+' : '−'}${symbol}${Math.abs(tx.amount)}</span>
-            </div>
-          `).join('')}
-          ${linkedTx.length > 3 ? `<p style="font-size: 8px; color: #606060; margin: 2px 0 0 0; text-align: right;">+${linkedTx.length - 3} more entries</p>` : ''}
-        </div>
-      </div>
-
-      <div class="event-card-actions">
-        <button class="event-action-btn delete" data-id="${evt.id}" type="button">
-          <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
-          Delete
-        </button>
-        <button class="event-action-btn add" data-id="${evt.id}" type="button">
-          <i data-lucide="plus-circle" style="width: 12px; height: 12px;"></i>
-          Add Spends
-        </button>
-      </div>
-    `;
-
-    // Delete event tracker
-    card.querySelector('.event-action-btn.delete').addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (confirm(`Are you sure you want to delete the "${evt.name}" event tracker? Transactions linked to this event will not be deleted.`)) {
-        deleteEventTracker(evt.id);
-      }
-    });
-
-    // Add transaction linked to this event
-    card.querySelector('.event-action-btn.add').addEventListener('click', (e) => {
-      e.stopPropagation();
-      openNumpadDrawer(true, null, evt.id);
-    });
-
-    grid.appendChild(card);
-  });
-
+  grid.appendChild(dashedCard);
   lucide.createIcons();
 }
 
 function createNewEventTracker() {
-  const name = prompt("Enter Event Name (e.g. Goa Trip 2026, Birthday Party):");
+  const name = prompt("Enter Collection Name (e.g. Goa Trip 2026, Home Renovation):");
   if (!name || !name.trim()) return;
   
   const budgetStr = prompt("Enter Target Budget limit (₹):", "5000");
@@ -5382,19 +5525,30 @@ function createNewEventTracker() {
   const budget = parseFloat(budgetStr.replace(/[^0-9.]/g, '')) || 0;
   
   const desc = prompt("Enter short description (optional):") || "";
+  const emoji = prompt("Enter Emoji icon (optional):", "🎉") || "🎉";
+  const dateRange = prompt("Enter Date Range (e.g. 2026-07-15 ➔ 2026-07-20) (optional):") || new Date().toISOString().split('T')[0];
+
+  // Automatic theme color cycle
+  const colors = ['#3b82f6', '#f97316', '#ef4444', '#10b981', '#a855f7'];
+  const activeIdx = (state.events ? state.events.length : 0) % colors.length;
+  const color = colors[activeIdx];
 
   const newEvent = {
     id: 'evt-' + Date.now(),
     name: name.trim(),
     budget: budget,
-    desc: desc.trim()
+    desc: desc.trim(),
+    emoji: emoji.trim(),
+    dateRange: dateRange.trim(),
+    color: color
   };
 
   if (!state.events) state.events = [];
   state.events.push(newEvent);
   saveState();
+  refreshDashboard();
   renderEventsTab();
-  showToast(`Event tracker "${name}" created!`, 'success');
+  showToast(`Collection "${newEvent.name}" created!`, 'success');
 }
 
 function deleteEventTracker(eventId) {
@@ -5407,8 +5561,89 @@ function deleteEventTracker(eventId) {
   });
 
   saveState();
+  refreshDashboard();
   renderEventsTab();
-  showToast('Event tracker deleted successfully.', 'info');
+  showToast('Collection deleted successfully.', 'info');
+}
+
+function openCollectionSheet(evtId) {
+  const evt = state.events.find(e => e.id === evtId);
+  if (!evt) return;
+
+  const overlay = document.getElementById('collectionSheetOverlay');
+  if (!overlay) return;
+
+  // Fill static details
+  document.getElementById('sheetCollectionEmoji').innerText = evt.emoji || '🏖️';
+  document.getElementById('sheetCollectionTitle').innerText = evt.name;
+  document.getElementById('sheetCollectionDate').innerText = evt.dateRange || 'No target date range';
+  document.getElementById('sheetCollectionDesc').innerText = evt.desc || 'No description provided';
+
+  // Find transactions
+  const symbol = state.currencySymbol || '₹';
+  const linkedTx = state.transactions.filter(t => t.eventId === evtId);
+  const totalSpent = linkedTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const totalIncome = linkedTx.filter(t => t.type === 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const remaining = evt.budget - totalSpent;
+
+  // Set stats
+  document.getElementById('sheetCollectionBudget').innerText = `${symbol}${evt.budget.toLocaleString()}`;
+  document.getElementById('sheetCollectionSpent').innerText = `${symbol}${totalSpent.toLocaleString()}`;
+  document.getElementById('sheetCollectionLeft').innerText = `${symbol}${remaining.toLocaleString()}`;
+
+  // Render transaction list
+  const container = document.getElementById('sheetTransactionsContainer');
+  container.innerHTML = '';
+  if (linkedTx.length === 0) {
+    container.innerHTML = `<p style="font-size: 10px; color: #606060; font-style: italic; margin: 12px 0; text-align: center;">No linked transactions found.</p>`;
+  } else {
+    linkedTx.forEach(tx => {
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.justify = 'space-between';
+      row.style.alignItems = 'center';
+      row.style.padding = '8px';
+      row.style.borderRadius = '8px';
+      row.style.background = 'rgba(255,255,255,0.02)';
+      row.style.border = '1px solid rgba(255,255,255,0.02)';
+      row.style.fontFamily = 'var(--font-family)';
+      
+      const isInc = tx.type === 'income';
+      row.innerHTML = `
+        <div style="text-align: left;">
+          <span style="font-size: 11px; font-weight: 700; color: #f0f0f0; display: block;">${tx.title}</span>
+          <span style="font-size: 9px; color: #606060;">${tx.date} • ${tx.category}</span>
+        </div>
+        <span style="font-size: 11px; font-weight: 800; color: ${isInc ? '#00e87a' : '#ff4757'};">
+          ${isInc ? '+' : '−'}${symbol}${Math.abs(tx.amount).toLocaleString()}
+        </span>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  // Configure buttons inside detail sheet
+  const delBtn = document.getElementById('sheetDeleteCollectionBtn');
+  delBtn.onclick = () => {
+    if (confirm(`Are you sure you want to delete the "${evt.name}" collection? Linked transactions will not be deleted.`)) {
+      deleteEventTracker(evt.id);
+      closeCollectionSheet();
+    }
+  };
+
+  const addBtn = document.getElementById('sheetAddTransactionBtn');
+  addBtn.onclick = () => {
+    closeCollectionSheet();
+    openNumpadDrawer(true, null, evt.id);
+  };
+
+  overlay.classList.add('open');
+  lucide.createIcons();
+}
+
+function closeCollectionSheet() {
+  const overlay = document.getElementById('collectionSheetOverlay');
+  if (overlay) overlay.classList.remove('open');
 }
 
 function refreshDashboard() {
@@ -5421,6 +5656,14 @@ function refreshDashboard() {
   if (sbAvatar) {
     const name = state.userName || 'Shekhar';
     sbAvatar.innerText = name.charAt(0).toUpperCase();
+  }
+
+  // Update collections count badge in sidebar
+  const collBadge = document.getElementById('sidebarCollectionsBadge');
+  if (collBadge) {
+    const count = (state.events && Array.isArray(state.events)) ? state.events.length : 0;
+    collBadge.innerText = count;
+    collBadge.style.display = count > 0 ? 'inline-block' : 'none';
   }
 
   // Update header calendar date & greeting name dynamically

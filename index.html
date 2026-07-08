@@ -575,8 +575,9 @@
           Budget
         </button>
         <button class="tab-btn" data-tab="events" type="button">
-          <i data-lucide="tags" class="w-4 h-4"></i>
-          Event Tracker
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          Collections
+          <span class="collections-count-badge" id="sidebarCollectionsBadge">0</span>
         </button>
         <button class="tab-btn" id="sidebarSettingsBtn" type="button">
           <i data-lucide="settings" class="w-4 h-4"></i>
@@ -887,22 +888,22 @@
           </div>
         </div>
 
-        <!-- Tab panel 5: Trips & Events Tracker -->
+        <!-- Tab panel 5: Collections -->
         <div class="events-tab-panel animate-fadeIn" id="tab-panel-events" style="display: none; width: 100%;">
           <div class="glass-panel" style="padding: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
               <div>
-                <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 15px; font-weight: 700; margin: 0;">Event Budgets</h3>
-                <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Track and group spends for specific trips, parties, or themes</span>
+                <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 15px; font-weight: 700; margin: 0;">Collections</h3>
+                <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Track budgets for events, trips, and projects</span>
               </div>
               <button class="primary-btn" id="createNewEventBtn" type="button" style="background: #00e87a; color: #080808; border: none; font-weight: 700; border-radius: 10px; height: 34px; font-size: 11px; padding: 0 16px; font-family: var(--font-family); display: flex; align-items: center; gap: 6px; cursor: pointer; outline: none;">
                 <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
-                Create Event Tracker
+                New Collection
               </button>
             </div>
 
             <!-- List of events grid -->
-            <div id="eventsContainerGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; width: 100%;">
+            <div id="eventsContainerGrid" class="collections-grid-layout">
               <!-- Injected dynamically by app.js -->
             </div>
           </div>
@@ -1094,9 +1095,9 @@
       </div>
     </div>
 
-    <!-- Event Link dropdown (Optional) -->
+    <!-- Collection Link dropdown (Optional) -->
     <div class="mb-4">
-      <label class="input-label-tag" for="numpadEventLink">Event Link (Optional)</label>
+      <label class="input-label-tag" for="numpadEventLink">Collection Link (Optional)</label>
       <select class="st-input-box font-semibold" id="numpadEventLink"
         style="padding-left: 12px; border-radius: 12px; font-size: 11px; height: 38px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>&quot;); background-repeat: no-repeat; background-position: right 12px center; background-size: 10px; padding-right: 24px; width: 100%; border: 1px solid var(--border-color); background-color: var(--bg-input); color: var(--text-primary);">
         <option value="">None</option>
@@ -1333,6 +1334,66 @@
         <button class="secondary-btn" id="logoutCancelBtn" type="button"
           style="width: 100%; padding: 12px; border-radius: 14px; font-size: 13px;">
           Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================================
+       COLLECTIONS DETAIL SHEET MODAL OVERLAY
+       ============================================================= -->
+  <div class="modal-overlay-backdrop" id="collectionSheetOverlay">
+    <div class="settings-modal-card glass-panel select-none relative animate-fadeIn"
+      style="max-width: 500px; padding: 24px; width: 90%;">
+
+      <!-- Top Close X Button -->
+      <button class="settings-close-x-btn" id="closeCollectionSheetXBtn" type="button" aria-label="Close Collection Sheet">
+        <i data-lucide="x"></i>
+      </button>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+        <div class="collection-emoji-wrapper" id="sheetCollectionEmoji">🏖️</div>
+        <div>
+          <h3 class="settings-modal-title text-zinc-100" id="sheetCollectionTitle" style="margin: 0; font-size: 16px;">Goa Trip 2026</h3>
+          <span style="font-size: 10px; color: #606060; font-family: var(--font-family);" id="sheetCollectionDate">2026-07-15 ➔ 2026-07-20</span>
+        </div>
+      </div>
+      
+      <p class="settings-modal-subtitle" id="sheetCollectionDesc" style="margin-bottom: 20px; line-height: 1.5; text-align: left;">Annual beach getaway with friends</p>
+
+      <!-- Mini stats summary -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);">
+        <div>
+          <span style="font-size: 9px; color: #606060; font-weight: 700; display: block; text-transform: uppercase; font-family: var(--font-family);">Budget</span>
+          <span style="font-size: 13px; font-weight: 800; color: #f0f0f0; margin-top: 4px; display: block; font-family: var(--font-family);" id="sheetCollectionBudget">₹35,000</span>
+        </div>
+        <div>
+          <span style="font-size: 9px; color: #606060; font-weight: 700; display: block; text-transform: uppercase; font-family: var(--font-family);">Spent</span>
+          <span style="font-size: 13px; font-weight: 800; color: #ff4757; margin-top: 4px; display: block; font-family: var(--font-family);" id="sheetCollectionSpent">₹22,550</span>
+        </div>
+        <div>
+          <span style="font-size: 9px; color: #606060; font-weight: 700; display: block; text-transform: uppercase; font-family: var(--font-family);">Left</span>
+          <span style="font-size: 13px; font-weight: 800; color: #00e87a; margin-top: 4px; display: block; font-family: var(--font-family);" id="sheetCollectionLeft">₹12,450</span>
+        </div>
+      </div>
+
+      <!-- Linked transactions list -->
+      <h4 style="font-size: 10px; font-weight: 700; color: #f0f0f0; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; font-family: var(--font-family);">Linked Transactions</h4>
+      <div id="sheetTransactionsContainer" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; border-radius: 12px; background: rgba(0,0,0,0.1); padding: 8px;">
+        <!-- Injected dynamically -->
+      </div>
+
+      <!-- Action buttons footer -->
+      <div class="flex gap-3" style="display: flex; gap: 12px; width: 100%;">
+        <button class="secondary-btn flex items-center justify-center gap-2" id="sheetDeleteCollectionBtn" type="button"
+          style="flex: 1; padding: 12px; border-radius: 14px; font-size: 12px; color: #f43f5e !important; border-color: rgba(244, 63, 94, 0.2) !important; background: rgba(244, 63, 94, 0.05) !important; height: 42px; display: flex; align-items: center; justify-content: center; font-family: var(--font-family);">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+          Delete
+        </button>
+        <button class="primary-btn flex items-center justify-center gap-2" id="sheetAddTransactionBtn" type="button"
+          style="flex: 1.2; padding: 12px; border-radius: 14px; font-size: 12px; background: #00e87a; color: #080808; height: 42px; display: flex; align-items: center; justify-content: center; font-family: var(--font-family);">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          Add Spends
         </button>
       </div>
     </div>
