@@ -3737,12 +3737,18 @@ select option {
   margin-top: 4px;
 }
 
+@media (max-width: 480px) {
+  .emoji-selector-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
 .emoji-circle-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3750,6 +3756,7 @@ select option {
   font-size: 18px;
   transition: border-color 0.2s, background-color 0.2s, transform 0.1s;
   padding: 0;
+  color: #ffffff;
 }
 
 .emoji-circle-btn:hover {
@@ -3759,7 +3766,7 @@ select option {
 
 .emoji-circle-btn.selected {
   border-color: var(--accent-primary) !important;
-  background: rgba(0, 232, 122, 0.08) !important;
+  background: rgba(0, 232, 122, 0.15) !important;
   transform: scale(1.08);
 }
 

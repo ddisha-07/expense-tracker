@@ -3442,9 +3442,9 @@ function setupGlobalEventListeners() {
     });
   }
 
-  // New Collection Form & Modal Listeners
-  const closeNewCollectionX = document.getElementById('closeNewCollectionModalBtn');
-  if (closeNewCollectionX) closeNewCollectionX.addEventListener('click', closeNewCollectionModal);
+  // New Collection Form & Modal Handlers
+  const closeNewCollectionModalBtn = document.getElementById('closeNewCollectionModalBtn');
+  if (closeNewCollectionModalBtn) closeNewCollectionModalBtn.addEventListener('click', closeNewCollectionModal);
 
   const newCollectionOverlay = document.getElementById('newCollectionModalOverlay');
   if (newCollectionOverlay) {
@@ -3454,7 +3454,9 @@ function setupGlobalEventListeners() {
   }
 
   const newCollectionForm = document.getElementById('newCollectionForm');
-  if (newCollectionForm) newCollectionForm.addEventListener('submit', handleNewCollectionSubmit);
+  if (newCollectionForm) {
+    newCollectionForm.addEventListener('submit', handleCollectionFormSubmit);
+  }
 
   const logoutRemember = document.getElementById('logoutRememberBtn');
   if (logoutRemember) logoutRemember.addEventListener('click', () => executeLogout('remember'));
@@ -3857,10 +3859,10 @@ function setupGlobalEventListeners() {
     });
   }
 
-  // Event Tracker Create Trigger
+  // Collections Create Trigger
   const createEventBtn = document.getElementById('createNewEventBtn');
   if (createEventBtn) {
-    createEventBtn.addEventListener('click', createNewEventTracker);
+    createEventBtn.addEventListener('click', openNewCollectionModal);
   }
 }
 
@@ -5530,73 +5532,61 @@ function renderEventsTab() {
   lucide.createIcons();
 }
 
-function createNewEventTracker() {
-  openNewCollectionModal();
-}
-
 function openNewCollectionModal() {
   const overlay = document.getElementById('newCollectionModalOverlay');
   if (!overlay) return;
 
-  const nameInput = document.getElementById('newCollectionName');
-  const descInput = document.getElementById('newCollectionDesc');
-  const budgetInput = document.getElementById('newCollectionBudget');
-  const startInput = document.getElementById('newCollectionStartDate');
-  const endInput = document.getElementById('newCollectionEndDate');
+  // Clear inputs
+  document.getElementById('newCollectionName').value = '';
+  document.getElementById('newCollectionDesc').value = '';
+  document.getElementById('newCollectionBudget').value = '0';
 
-  if (nameInput) nameInput.value = '';
-  if (descInput) descInput.value = '';
-  if (budgetInput) budgetInput.value = 0;
+  // Set default dates
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById('newCollectionStartDate').value = todayStr;
+  document.getElementById('newCollectionEndDate').value = todayStr;
 
-  const today = new Date().toISOString().split('T')[0];
-  if (startInput) startInput.value = today;
-  if (endInput) endInput.value = today;
-
-  // Render Emojis grid
+  // Initialize selector states
   const emojis = ['🏖️', '🏡', '🎉', '✈️', '🎓', '💍', '🏕️', '🎸', '🏋️', '🍽️', '🛒', '💼', '🎄', '🏥', '📚', '🚗'];
-  const emojiGrid = document.getElementById('newCollectionEmojiGrid');
-  const selectedEmojiInput = document.getElementById('newCollectionSelectedEmoji');
-  
-  if (emojiGrid && selectedEmojiInput) {
-    emojiGrid.innerHTML = '';
-    selectedEmojiInput.value = emojis[0];
-    emojis.forEach((em, idx) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `emoji-circle-btn ${idx === 0 ? 'selected' : ''}`;
-      btn.innerText = em;
-      btn.addEventListener('click', () => {
-        emojiGrid.querySelectorAll('.emoji-circle-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedEmojiInput.value = em;
-      });
-      emojiGrid.appendChild(btn);
-    });
-  }
-
-  // Render accent colorsSelector
   const colors = ['#00e87a', '#3b82f6', '#f97316', '#a855f7', '#eab308', '#ec4899', '#06b6d4', '#ef4444'];
-  const colorGrid = document.getElementById('newCollectionColorGrid');
-  const selectedColorInput = document.getElementById('newCollectionSelectedColor');
 
-  if (colorGrid && selectedColorInput) {
-    colorGrid.innerHTML = '';
-    selectedColorInput.value = colors[0];
-    colors.forEach((col, idx) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `color-circle-btn ${idx === 0 ? 'selected' : ''}`;
-      btn.style.backgroundColor = col;
-      btn.addEventListener('click', () => {
-        colorGrid.querySelectorAll('.color-circle-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedColorInput.value = col;
-      });
-      colorGrid.appendChild(btn);
+  const emojiGrid = document.getElementById('newCollectionEmojiGrid');
+  const colorGrid = document.getElementById('newCollectionColorGrid');
+
+  // Render Emojis circular list
+  emojiGrid.innerHTML = '';
+  emojis.forEach((emoji, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `emoji-circle-btn ${idx === 0 ? 'selected' : ''}`;
+    btn.innerText = emoji;
+    btn.addEventListener('click', () => {
+      emojiGrid.querySelectorAll('.emoji-circle-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('newCollectionSelectedEmoji').value = emoji;
     });
-  }
+    emojiGrid.appendChild(btn);
+  });
+  document.getElementById('newCollectionSelectedEmoji').value = emojis[0];
+
+  // Render Accent Colors circular list
+  colorGrid.innerHTML = '';
+  colors.forEach((color, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `color-circle-btn ${idx === 0 ? 'selected' : ''}`;
+    btn.style.backgroundColor = color;
+    btn.addEventListener('click', () => {
+      colorGrid.querySelectorAll('.color-circle-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('newCollectionSelectedColor').value = color;
+    });
+    colorGrid.appendChild(btn);
+  });
+  document.getElementById('newCollectionSelectedColor').value = colors[0];
 
   overlay.classList.add('open');
+  lucide.createIcons();
 }
 
 function closeNewCollectionModal() {
@@ -5604,25 +5594,22 @@ function closeNewCollectionModal() {
   if (overlay) overlay.classList.remove('open');
 }
 
-function handleNewCollectionSubmit(e) {
+function handleCollectionFormSubmit(e) {
   e.preventDefault();
-  
+
   const name = document.getElementById('newCollectionName').value.trim();
   const desc = document.getElementById('newCollectionDesc').value.trim();
   const budget = parseFloat(document.getElementById('newCollectionBudget').value) || 0;
-  const start = document.getElementById('newCollectionStartDate').value;
-  const end = document.getElementById('newCollectionEndDate').value;
+  const startDate = document.getElementById('newCollectionStartDate').value;
+  const endDate = document.getElementById('newCollectionEndDate').value;
   
   const emoji = document.getElementById('newCollectionSelectedEmoji').value;
   const color = document.getElementById('newCollectionSelectedColor').value;
 
-  let dateRange = '';
-  if (start && end) {
-    dateRange = start === end ? start : `${start} ➔ ${end}`;
-  } else if (start) {
-    dateRange = start;
-  } else {
-    dateRange = 'No target date range';
+  // Format date range representation
+  let dateRange = startDate;
+  if (startDate !== endDate) {
+    dateRange = `${startDate} ➔ ${endDate}`;
   }
 
   const newEvent = {
@@ -5637,7 +5624,7 @@ function handleNewCollectionSubmit(e) {
 
   if (!state.events) state.events = [];
   state.events.push(newEvent);
-  
+
   saveState();
   refreshDashboard();
   renderEventsTab();
