@@ -28,6 +28,10 @@ const CATEGORY_COLORS = {
   'Other': '#64748b'             // Slate Grey
 };
 
+let activeCollectionId = null;
+let sheetSortField = 'date';
+let sheetSortAsc = true;
+
 // Initial database defaults
 let state = {
   collectionsInitialized: false,
@@ -3473,6 +3477,22 @@ function setupGlobalEventListeners() {
     newCollectionForm.addEventListener('submit', handleCollectionFormSubmit);
   }
 
+  // Add Spreadsheet Row Modal Handlers
+  const closeSheetAddRowModalBtn = document.getElementById('closeSheetAddRowModalBtn');
+  if (closeSheetAddRowModalBtn) closeSheetAddRowModalBtn.addEventListener('click', closeSheetAddRowModal);
+
+  const sheetAddRowOverlay = document.getElementById('sheetAddRowModalOverlay');
+  if (sheetAddRowOverlay) {
+    sheetAddRowOverlay.addEventListener('click', (e) => {
+      if (e.target === sheetAddRowOverlay) closeSheetAddRowModal();
+    });
+  }
+
+  const sheetAddRowForm = document.getElementById('sheetAddRowForm');
+  if (sheetAddRowForm) {
+    sheetAddRowForm.addEventListener('submit', handleSheetAddRowFormSubmit);
+  }
+
   const logoutRemember = document.getElementById('logoutRememberBtn');
   if (logoutRemember) logoutRemember.addEventListener('click', () => executeLogout('remember'));
 
@@ -5666,80 +5686,409 @@ function openCollectionSheet(evtId) {
   const evt = state.events.find(e => e.id === evtId);
   if (!evt) return;
 
-  const overlay = document.getElementById('collectionSheetOverlay');
-  if (!overlay) return;
+  activeCollectionId = evtId;
+  sheetSortField = 'date';
+  sheetSortAsc = true;
 
-  // Fill static details
-  document.getElementById('sheetCollectionEmoji').innerText = evt.emoji || '🏖️';
-  document.getElementById('sheetCollectionTitle').innerText = evt.name;
-  document.getElementById('sheetCollectionDate').innerText = evt.dateRange || 'No target date range';
-  document.getElementById('sheetCollectionDesc').innerText = evt.desc || 'No description provided';
-
-  // Find transactions
-  const symbol = state.currencySymbol || '₹';
-  const linkedTx = state.transactions.filter(t => t.eventId === evtId);
-  const totalSpent = linkedTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-  const totalIncome = linkedTx.filter(t => t.type === 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-  const remaining = evt.budget - totalSpent;
-
-  // Set stats
-  document.getElementById('sheetCollectionBudget').innerText = `${symbol}${evt.budget.toLocaleString()}`;
-  document.getElementById('sheetCollectionSpent').innerText = `${symbol}${totalSpent.toLocaleString()}`;
-  document.getElementById('sheetCollectionLeft').innerText = `${symbol}${remaining.toLocaleString()}`;
-
-  // Render transaction list
-  const container = document.getElementById('sheetTransactionsContainer');
-  container.innerHTML = '';
-  if (linkedTx.length === 0) {
-    container.innerHTML = `<p style="font-size: 10px; color: #606060; font-style: italic; margin: 12px 0; text-align: center;">No linked transactions found.</p>`;
-  } else {
-    linkedTx.forEach(tx => {
-      const row = document.createElement('div');
-      row.style.display = 'flex';
-      row.style.justify = 'space-between';
-      row.style.alignItems = 'center';
-      row.style.padding = '8px';
-      row.style.borderRadius = '8px';
-      row.style.background = 'rgba(255,255,255,0.02)';
-      row.style.border = '1px solid rgba(255,255,255,0.02)';
-      row.style.fontFamily = 'var(--font-family)';
-      
-      const isInc = tx.type === 'income';
-      row.innerHTML = `
-        <div style="text-align: left;">
-          <span style="font-size: 11px; font-weight: 700; color: #f0f0f0; display: block;">${tx.title}</span>
-          <span style="font-size: 9px; color: #606060;">${tx.date} • ${tx.category}</span>
-        </div>
-        <span style="font-size: 11px; font-weight: 800; color: ${isInc ? '#00e87a' : '#ff4757'};">
-          ${isInc ? '+' : '−'}${symbol}${Math.abs(tx.amount).toLocaleString()}
-        </span>
-      `;
-      container.appendChild(row);
-    });
+  const listView = document.getElementById('collectionsListView');
+  const sheetView = document.getElementById('collectionsSheetView');
+  if (listView && sheetView) {
+    listView.style.display = 'none';
+    sheetView.style.display = 'block';
   }
 
-  // Configure buttons inside detail sheet
-  const delBtn = document.getElementById('sheetDeleteCollectionBtn');
-  delBtn.onclick = () => {
-    if (confirm(`Are you sure you want to delete the "${evt.name}" collection? Linked transactions will not be deleted.`)) {
-      deleteEventTracker(evt.id);
-      closeCollectionSheet();
+  // Update Breadcrumb name
+  document.getElementById('sheetViewBreadcrumbName').innerText = evt.name;
+
+  // Render static detail values
+  document.getElementById('sheetViewEmoji').innerText = evt.emoji || '🏖️';
+  document.getElementById('sheetViewTitle').innerText = evt.name;
+  document.getElementById('sheetViewDesc').innerText = evt.desc || 'Track themed budget';
+  document.getElementById('sheetViewDateRange').innerText = evt.dateRange || 'No active target date range';
+
+  // Bind breadcrumb click to return to list
+  const breadcrumb = document.getElementById('sheetViewBreadcrumb');
+  if (breadcrumb) {
+    breadcrumb.onclick = closeCollectionSheet;
+  }
+
+  // Bind delete button
+  const deleteBtn = document.getElementById('sheetViewDeleteBtn');
+  if (deleteBtn) {
+    deleteBtn.onclick = () => {
+      if (confirm(`Are you sure you want to delete the "${evt.name}" collection? Linked transactions will not be deleted.`)) {
+        deleteEventTracker(evt.id);
+        closeCollectionSheet();
+      }
+    };
+  }
+
+  // Bind Add Row button
+  const addRowBtn = document.getElementById('sheetViewAddRowBtn');
+  if (addRowBtn) {
+    addRowBtn.onclick = () => {
+      openSheetAddRowModal();
+    };
+  }
+
+  // Bind sorting columns click
+  const ths = [
+    { id: 'th-date', field: 'date' },
+    { id: 'th-desc', field: 'desc' },
+    { id: 'th-category', field: 'category' },
+    { id: 'th-inflow', field: 'inflow' },
+    { id: 'th-outflow', field: 'outflow' }
+  ];
+  ths.forEach(item => {
+    const el = document.getElementById(item.id);
+    if (el) {
+      el.onclick = () => {
+        sortSheetTable(item.field);
+      };
     }
-  };
+  });
 
-  const addBtn = document.getElementById('sheetAddTransactionBtn');
-  addBtn.onclick = () => {
-    closeCollectionSheet();
-    openNumpadDrawer(true, null, evt.id);
-  };
-
-  overlay.classList.add('open');
-  lucide.createIcons();
+  renderCollectionSheetDetails();
 }
 
 function closeCollectionSheet() {
-  const overlay = document.getElementById('collectionSheetOverlay');
+  activeCollectionId = null;
+  const listView = document.getElementById('collectionsListView');
+  const sheetView = document.getElementById('collectionsSheetView');
+  if (listView && sheetView) {
+    listView.style.display = 'block';
+    sheetView.style.display = 'none';
+  }
+  renderEventsTab();
+}
+
+function renderCollectionSheetDetails() {
+  if (!activeCollectionId) return;
+  const evt = state.events.find(e => e.id === activeCollectionId);
+  if (!evt) return;
+
+  const symbol = state.currencySymbol || '₹';
+  const linkedTx = state.transactions.filter(t => t.eventId === activeCollectionId);
+
+  // Sorting
+  const sorted = [...linkedTx].sort((a, b) => {
+    let valA, valB;
+    if (sheetSortField === 'date') {
+      valA = new Date(a.date || 0);
+      valB = new Date(b.date || 0);
+    } else if (sheetSortField === 'desc') {
+      valA = (a.title || '').toLowerCase();
+      valB = (b.title || '').toLowerCase();
+    } else if (sheetSortField === 'category') {
+      valA = (a.category || '').toLowerCase();
+      valB = (b.category || '').toLowerCase();
+    } else if (sheetSortField === 'inflow') {
+      valA = a.type === 'income' ? Math.abs(a.amount) : 0;
+      valB = b.type === 'income' ? Math.abs(b.amount) : 0;
+    } else if (sheetSortField === 'outflow') {
+      valA = a.type === 'expense' ? Math.abs(a.amount) : 0;
+      valB = b.type === 'expense' ? Math.abs(b.amount) : 0;
+    }
+    if (valA < valB) return sheetSortAsc ? -1 : 1;
+    if (valA > valB) return sheetSortAsc ? 1 : -1;
+    return 0;
+  });
+
+  // Calculate quick stats
+  const totalInflow = linkedTx.filter(t => t.type === 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const totalOutflow = linkedTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const netBalance = totalInflow - totalOutflow;
+  const remaining = evt.budget - totalOutflow;
+
+  // Set card texts
+  document.getElementById('sheetStatBudget').innerText = `${symbol}${evt.budget.toLocaleString()}`;
+  document.getElementById('sheetStatInflow').innerText = `${symbol}${totalInflow.toLocaleString()}`;
+  document.getElementById('sheetStatOutflow').innerText = `${symbol}${totalOutflow.toLocaleString()}`;
+  document.getElementById('sheetStatNet').innerText = `${symbol}${netBalance.toLocaleString()}`;
+  
+  // Set net balance color based on sign
+  const netEl = document.getElementById('sheetStatNet');
+  if (netBalance < 0) {
+    netEl.style.color = '#f43f5e';
+  } else if (netBalance > 0) {
+    netEl.style.color = '#00e87a';
+  } else {
+    netEl.style.color = '#3b82f6';
+  }
+
+  const remEl = document.getElementById('sheetStatRemaining');
+  remEl.innerText = `${symbol}${remaining.toLocaleString()}`;
+  if (remaining < 0) {
+    remEl.style.color = '#f43f5e';
+  } else {
+    remEl.style.color = '#00e87a';
+  }
+
+  // Utilization progress bar
+  const utilPercent = evt.budget > 0 ? Math.round((totalOutflow / evt.budget) * 100) : 0;
+  document.getElementById('sheetUtilizationPercent').innerText = `${utilPercent}%`;
+  
+  const fill = document.getElementById('sheetProgressBarFill');
+  fill.style.width = `${Math.min(utilPercent, 100)}%`;
+  
+  // Adaptive color based on utilization percent
+  if (utilPercent <= 60) {
+    fill.style.backgroundColor = '#00e87a'; // Green
+    document.getElementById('sheetUtilizationPercent').style.color = '#00e87a';
+  } else if (utilPercent <= 90) {
+    fill.style.backgroundColor = '#eab308'; // Amber
+    document.getElementById('sheetUtilizationPercent').style.color = '#eab308';
+  } else {
+    fill.style.backgroundColor = '#f43f5e'; // Red
+    document.getElementById('sheetUtilizationPercent').style.color = '#f43f5e';
+  }
+
+  // Category Breakdown Bar Chart (Horizontal HTML bars)
+  const catBreakdown = {};
+  linkedTx.filter(t => t.type === 'expense').forEach(t => {
+    catBreakdown[t.category] = (catBreakdown[t.category] || 0) + Math.abs(t.amount);
+  });
+  
+  const sortedCats = Object.entries(catBreakdown).sort((a, b) => b[1] - a[1]);
+  const maxOutflow = sortedCats.length > 0 ? sortedCats[0][1] : 1;
+  const breakdownGrid = document.getElementById('sheetCategoryBreakdownGrid');
+  breakdownGrid.innerHTML = '';
+  
+  if (sortedCats.length === 0) {
+    breakdownGrid.innerHTML = `<p style="font-size: 10px; color: #606060; font-style: italic; margin: 4px 0;">No outflow entries logged for category analysis.</p>`;
+  } else {
+    sortedCats.forEach(([cat, amount]) => {
+      const barFillPercent = Math.round((amount / maxOutflow) * 100);
+      const catColor = CATEGORY_COLORS[cat] || '#64748b';
+      
+      const wrapper = document.createElement('div');
+      wrapper.className = 'category-progress-bar-wrapper';
+      wrapper.innerHTML = `
+        <span class="category-progress-bar-label">${cat}</span>
+        <div class="category-progress-bar-track">
+          <div class="category-progress-bar-fill" style="width: ${barFillPercent}%; background-color: ${catColor};"></div>
+        </div>
+        <span class="category-progress-bar-amount">${symbol}${amount.toLocaleString()}</span>
+      `;
+      breakdownGrid.appendChild(wrapper);
+    });
+  }
+
+  // Spreadsheet table rows render
+  const tbody = document.getElementById('sheetTableBody');
+  tbody.innerHTML = '';
+
+  let cumulativeBalance = 0;
+
+  if (sorted.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" style="padding: 24px; font-size: 11px; color: #606060; font-style: italic; text-align: center;">
+          No transactions linked to this collection. Click "+ Add Row" below to log entries!
+        </td>
+      </tr>
+    `;
+  } else {
+    sorted.forEach((tx, idx) => {
+      const isIncome = tx.type === 'income';
+      const amt = Math.abs(tx.amount);
+      
+      // Auto-calculate cumulative running balance down the sorted rows
+      if (isIncome) {
+        cumulativeBalance += amt;
+      } else {
+        cumulativeBalance -= amt;
+      }
+
+      const row = document.createElement('tr');
+      row.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
+      
+      row.innerHTML = `
+        <td style="padding: 12px 16px; font-size: 11px; color: #606060;">${idx + 1}</td>
+        <td style="padding: 12px 16px; font-size: 11px; color: #f0f0f0;">${tx.date}</td>
+        <td style="padding: 12px 16px; font-size: 11px; color: #ffffff; font-weight: 600;">${tx.title}</td>
+        <td style="padding: 12px 16px; font-size: 11px;">
+          <span style="background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 6px; font-size: 10px; color: #e0e0e0;">
+            ${tx.category}
+          </span>
+        </td>
+        
+        <!-- Inflow cell with green tinted background if > 0 -->
+        <td style="padding: 12px 16px; font-size: 11px; text-align: right; font-weight: 700; color: #00e87a; background: ${isIncome ? 'rgba(0, 232, 122, 0.06)' : 'transparent'};">
+          ${isIncome ? '+' + symbol + amt.toLocaleString() : '—'}
+        </td>
+        
+        <!-- Outflow cell with red tinted background if > 0 -->
+        <td style="padding: 12px 16px; font-size: 11px; text-align: right; font-weight: 700; color: #f43f5e; background: ${!isIncome ? 'rgba(255, 71, 87, 0.06)' : 'transparent'};">
+          ${!isIncome ? '−' + symbol + amt.toLocaleString() : '—'}
+        </td>
+        
+        <td style="padding: 12px 16px; font-size: 11px; text-align: right; font-weight: 700; color: ${cumulativeBalance < 0 ? '#f43f5e' : '#00e87a'};">
+          ${cumulativeBalance < 0 ? '−' : ''}${symbol}${Math.abs(cumulativeBalance).toLocaleString()}
+        </td>
+        <td style="padding: 12px 16px; font-size: 10px; color: #a0a0a0; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          ${tx.notes || ''}
+        </td>
+        <td style="padding: 12px 16px; text-align: center;">
+          <button class="row-trash-btn" type="button" onclick="deleteSheetRow('${tx.id}')" title="Delete Row">
+            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // Update table footer totals
+  document.getElementById('sheetTotalInflow').innerText = `${symbol}${totalInflow.toLocaleString()}`;
+  document.getElementById('sheetTotalOutflow').innerText = `${symbol}${totalOutflow.toLocaleString()}`;
+
+  lucide.createIcons();
+}
+
+function sortSheetTable(field) {
+  if (sheetSortField === field) {
+    sheetSortAsc = !sheetSortAsc;
+  } else {
+    sheetSortField = field;
+    sheetSortAsc = true;
+  }
+
+  // Reset all sort icons
+  const fields = ['date', 'desc', 'category', 'inflow', 'outflow'];
+  fields.forEach(f => {
+    const el = document.getElementById(`sort-${f}-icon`);
+    if (el) {
+      el.innerText = '↕';
+    }
+  });
+
+  // Set active sort icon
+  const activeIcon = document.getElementById(`sort-${sheetSortField}-icon`);
+  if (activeIcon) {
+    activeIcon.innerText = sheetSortAsc ? '↑' : '↓';
+  }
+
+  renderCollectionSheetDetails();
+}
+
+function openSheetAddRowModal() {
+  const overlay = document.getElementById('sheetAddRowModalOverlay');
+  if (!overlay) return;
+
+  // Pre-fill defaults
+  document.getElementById('sheetRowAmount').value = '';
+  document.getElementById('sheetRowDesc').value = '';
+  document.getElementById('sheetRowNotes').value = '';
+  document.getElementById('sheetRowDate').value = new Date().toISOString().split('T')[0];
+
+  // Set type to outflow default
+  setSheetRowType('outflow');
+
+  overlay.classList.add('open');
+}
+
+function closeSheetAddRowModal() {
+  const overlay = document.getElementById('sheetAddRowModalOverlay');
   if (overlay) overlay.classList.remove('open');
+}
+
+function setSheetRowType(type) {
+  const overlay = document.getElementById('sheetAddRowModalOverlay');
+  if (!overlay) return;
+
+  const typeInput = document.getElementById('sheetRowSelectedType');
+  typeInput.value = type;
+
+  const btnOut = document.getElementById('sheetRowTypeOutflow');
+  const btnIn = document.getElementById('sheetRowTypeInflow');
+  const amountContainer = document.getElementById('sheetRowAmountContainer');
+  const amountLabel = document.getElementById('sheetRowAmountLabel');
+  const submitBtn = document.getElementById('sheetRowSubmitBtn');
+
+  if (type === 'inflow') {
+    btnIn.classList.add('active');
+    btnIn.style.background = '#00e87a';
+    btnIn.style.color = '#080808';
+
+    btnOut.classList.remove('active');
+    btnOut.style.background = 'transparent';
+    btnOut.style.color = '#606060';
+
+    amountContainer.style.background = 'rgba(0, 232, 122, 0.05)';
+    amountContainer.style.borderColor = 'rgba(0, 232, 122, 0.2)';
+    amountLabel.style.color = '#00e87a';
+    amountLabel.innerText = 'Amount Inflow (₹)';
+
+    submitBtn.style.background = '#00e87a';
+    submitBtn.style.color = '#080808';
+    submitBtn.innerText = 'Log Inflow';
+  } else {
+    btnOut.classList.add('active');
+    btnOut.style.background = '#f43f5e';
+    btnOut.style.color = '#ffffff';
+
+    btnIn.classList.remove('active');
+    btnIn.style.background = 'transparent';
+    btnIn.style.color = '#606060';
+
+    amountContainer.style.background = 'rgba(244, 63, 94, 0.05)';
+    amountContainer.style.borderColor = 'rgba(244, 63, 94, 0.2)';
+    amountLabel.style.color = '#f43f5e';
+    amountLabel.innerText = 'Amount Outflow (₹)';
+
+    submitBtn.style.background = '#f43f5e';
+    submitBtn.style.color = '#ffffff';
+    submitBtn.innerText = 'Log Outflow';
+  }
+}
+
+function handleSheetAddRowFormSubmit(e) {
+  e.preventDefault();
+  if (!activeCollectionId) return;
+
+  const type = document.getElementById('sheetRowSelectedType').value;
+  const amountVal = parseFloat(document.getElementById('sheetRowAmount').value) || 0;
+  const desc = document.getElementById('sheetRowDesc').value.trim();
+  const category = document.getElementById('sheetRowCategory').value;
+  const date = document.getElementById('sheetRowDate').value;
+  const notes = document.getElementById('sheetRowNotes').value.trim();
+
+  if (amountVal <= 0) {
+    showToast('Please enter a valid amount greater than 0', 'error');
+    return;
+  }
+
+  // Outflow values stored as negative inside state ledger
+  const amount = type === 'inflow' ? amountVal : -amountVal;
+
+  const newTx = {
+    id: 'tx-' + Date.now(),
+    title: desc,
+    amount: amount,
+    type: type === 'inflow' ? 'income' : 'expense',
+    category: category,
+    date: date,
+    notes: notes,
+    eventId: activeCollectionId
+  };
+
+  state.transactions.push(newTx);
+  saveState();
+  refreshDashboard();
+  renderCollectionSheetDetails();
+  closeSheetAddRowModal();
+  showToast(`Row logged successfully!`, 'success');
+}
+
+function deleteSheetRow(txId) {
+  if (confirm('Are you sure you want to delete this spreadsheet row?')) {
+    state.transactions = state.transactions.filter(t => t.id !== txId);
+    saveState();
+    refreshDashboard();
+    renderCollectionSheetDetails();
+    showToast('Row deleted successfully.', 'info');
+  }
 }
 
 function refreshDashboard() {

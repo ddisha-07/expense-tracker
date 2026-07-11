@@ -3805,3 +3805,81 @@ select option {
   border-color: #ffffff !important;
   transform: scale(1.15);
 }
+
+/* Spreadsheet Table styles */
+.spreadsheet-table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+.spreadsheet-table tr:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+.spreadsheet-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.spreadsheet-table th {
+  position: sticky;
+  top: 0;
+  background: #121212;
+  z-index: 10;
+  border-bottom: 1px solid var(--border-color);
+}
+.spreadsheet-table tr .row-trash-btn {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: transparent;
+  border: none;
+  color: #f43f5e;
+  cursor: pointer;
+  padding: 4px;
+}
+.spreadsheet-table tr:hover .row-trash-btn {
+  opacity: 1;
+}
+
+/* Category horizontal progress bars */
+.category-progress-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.category-progress-bar-label {
+  width: 100px;
+  font-size: 11px;
+  color: #a0a0a0;
+  font-weight: 600;
+  font-family: var(--font-family);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+}
+.category-progress-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.category-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+.category-progress-bar-amount {
+  width: 80px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 700;
+  color: #f0f0f0;
+  font-family: var(--font-family);
+}
+
+/* 5 Stats Cards Grid responsive layout */
+@media (max-width: 768px) {
+  .sheet-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .sheet-stats-grid > div:last-child {
+    grid-column: span 2 !important;
+  }
+}
