@@ -3185,6 +3185,12 @@ function setupGlobalEventListeners() {
         }
       }
 
+      // Show/hide Overview page widgets (greeting, alerts banner, stats cards)
+      const overviewHeader = document.getElementById('dashboardOverviewHeader');
+      if (overviewHeader) {
+        overviewHeader.style.display = targetTab === 'analytics' ? 'flex' : 'none';
+      }
+
       // Update header view title
       const viewTitle = document.getElementById('currentViewTitle');
       if (viewTitle) {
@@ -3227,7 +3233,7 @@ function setupGlobalEventListeners() {
         renderSavingsTab();
       } else if (targetTab === 'events') {
         if (eventsPanel) eventsPanel.style.display = 'flex';
-        renderEventsTab();
+        closeCollectionSheet();
       }
     });
   });
