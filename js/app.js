@@ -2,30 +2,29 @@
 
 // Default student categories HSL colors suited for dark glassmorphism
 const CATEGORY_COLORS = {
-  // Standard Categories
-  'Food': '#06b6d4',             // Cyan
-  'Transport': '#8b5cf6',        // Violet
-  'Shopping': '#ec4899',         // Pink
-  'Entertainment': '#f59e0b',    // Amber
-  'Education': '#6366f1',        // Indigo
-  'Health': '#10b981',           // Emerald
-  'Bills': '#e11d48',            // Crimson
+  // Predefined Categories
+  'Food': '#06b6d4',
+  'Travel': '#8b5cf6',
+  'Shopping': '#ec4899',
+  'Accommodation': '#f43f5e',
+  'Bills': '#e11d48',
+  'Education': '#6366f1',
+  'Health': '#10b981',
+  'Entertainment': '#f59e0b',
+  'Groceries': '#22c55e',
+  'Activities': '#0ea5e9',
+  'Transport': '#8b5cf6',
+  'Investment': '#eab308',
+  'Utilities': '#f97316',
+  'Miscellaneous': '#64748b',
 
-  // Student Arrangements
-  'Rent/Hostel': '#f43f5e',      // Rose / Coral Red
-  'Stationery': '#0ea5e9',       // Sky Blue
-  'Miscellaneous': '#64748b',    // Slate Grey
-
-  // Working Professional
-  'Rent': '#f43f5e',             // Rose / Coral Red
-  'Utilities': '#f97316',        // Vibrant Orange
-  'Groceries': '#10b981',        // Emerald Green
-  'Savings': '#22c55e',          // Vibrant Green
-  'EMI/Loan': '#ef4444',         // Warning Red
-  'Other Recurring': '#a855f7',  // Vibrant Purple
-
+  // Legacy mappings
+  'Rent/Hostel': '#f43f5e',
+  'Stationery': '#0ea5e9',
+  'Rent': '#f43f5e',
+  
   // Fallbacks
-  'Other': '#64748b'             // Slate Grey
+  'Other': '#64748b'
 };
 
 let activeCollectionId = null;
