@@ -72,6 +72,11 @@ body {
   transition: background 0.4s ease, color 0.4s ease;
 }
 
+body.dashboard-active, html.dashboard-active {
+  height: 100vh;
+  overflow: hidden;
+}
+
 /* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 6px;

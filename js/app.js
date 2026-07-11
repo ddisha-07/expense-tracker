@@ -442,12 +442,16 @@ function applyTheme(themeName) {
 // ONBOARDING SCREEN SLIDER ROUTINES
 // -------------------------------------------------------------
 function showOnboardingView() {
+  document.documentElement.classList.remove('dashboard-active');
+  document.body.classList.remove('dashboard-active');
   document.getElementById('onboardingContainer').style.display = 'flex';
   document.getElementById('dashboardContainer').style.display = 'none';
   document.getElementById('floatingAddBtn').style.display = 'none';
 }
 
 function showDashboardView() {
+  document.documentElement.classList.add('dashboard-active');
+  document.body.classList.add('dashboard-active');
   document.getElementById('onboardingContainer').style.display = 'none';
   document.getElementById('dashboardContainer').style.display = 'block';
   document.getElementById('floatingAddBtn').style.display = 'flex';
