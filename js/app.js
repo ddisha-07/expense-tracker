@@ -30,6 +30,7 @@ const CATEGORY_COLORS = {
 
 // Initial database defaults
 let state = {
+  collectionsInitialized: false,
   userName: 'Shekhar',
   income: 3000,
   initialBalance: 0,
@@ -201,7 +202,8 @@ function loadState() {
   if (!Array.isArray(state.events)) {
     state.events = [];
   }
-  if (state.events.length === 0) {
+  if (!state.collectionsInitialized && state.events.length === 0) {
+    state.collectionsInitialized = true;
     state.events = [
       {
         id: 'evt-goa-trip',
@@ -1113,6 +1115,7 @@ function executeLogout(mode) {
 
   // Format state completely back to initial factory defaults for a clean setup wizard refresh
   state = {
+    collectionsInitialized: false,
     income: 3000,
     initialBalance: 0,
     fixedExpenses: [
