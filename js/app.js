@@ -6097,6 +6097,10 @@ function deleteSheetRow(txId) {
   }
 }
 
+window.setSheetRowType = setSheetRowType;
+window.sortSheetTable = sortSheetTable;
+window.deleteSheetRow = deleteSheetRow;
+
 function refreshDashboard() {
   // Update Left Sidebar profile details
   const sbName = document.getElementById('sidebarProfileName');
