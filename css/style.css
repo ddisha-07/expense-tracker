@@ -3586,7 +3586,7 @@ select option {
 /* Collections Dashboard Styles */
 .collections-grid-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 100%;
 }

@@ -3497,7 +3497,7 @@ function setupGlobalEventListeners() {
         if (savingsPanel) savingsPanel.style.display = 'flex';
         renderSavingsTab();
       } else if (targetTab === 'events') {
-        if (eventsPanel) eventsPanel.style.display = 'flex';
+        if (eventsPanel) eventsPanel.style.display = 'block';
         closeCollectionSheet();
       } else if (targetTab === 'settings') {
         if (settingsPanel) settingsPanel.style.display = 'flex';
