@@ -1444,6 +1444,8 @@ function renderDashboardStats() {
 // -------------------------------------------------------------
 function drawAllSvgCharts() {
   drawCategoryDonutSvg();
+  drawMonthlySpendingBarChartSvg();
+  renderTopCategoriesList();
   drawTrendLineSvg();
   drawWeekdayAveragesSvg();
   drawRecurringPaymentsChart();
@@ -1848,6 +1850,203 @@ function drawCategoryDonutSvg() {
       });
     });
   });
+}
+
+function drawMonthlySpendingBarChartSvg() {
+  const container = document.getElementById('monthlySpendingChartContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  try {
+    const { year: filterYear, month: filterMonth } = getActiveMonthFilterRange();
+    
+    // Generate the last 6 months (preceding and including the active filter month)
+    const monthsData = [];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    for (let i = 5; i >= 0; i--) {
+      let m = filterMonth - i;
+      let y = filterYear;
+      if (m < 0) {
+        m += 12;
+        y -= 1;
+      }
+      monthsData.push({
+        month: m,
+        year: y,
+        label: monthNames[m],
+        amount: 0
+      });
+    }
+
+    // Accumulate transactions for each of these 6 months
+    state.transactions.forEach(t => {
+      if (t.type === 'expense') {
+        const d = new Date(t.date);
+        const txMonth = d.getMonth();
+        const txYear = d.getFullYear();
+        
+        const match = monthsData.find(item => item.month === txMonth && item.year === txYear);
+        if (match) {
+          match.amount += Number(t.amount) || 0;
+        }
+      }
+    });
+
+    const width = 500;
+    const height = 240;
+    const paddingLeft = 55;
+    const paddingRight = 25;
+    const paddingTop = 25;
+    const paddingBottom = 40;
+
+    const chartWidth = width - paddingLeft - paddingRight;
+    const chartHeight = height - paddingTop - paddingBottom;
+
+    const maxVal = Math.max(1000, ...monthsData.map(d => d.amount)) * 1.15;
+    const symbol = state.currencySymbol || '₹';
+
+    // Draw Y Axis and grid lines
+    const yTicks = [0, maxVal * 0.25, maxVal * 0.5, maxVal * 0.75, maxVal].map(v => Math.round(v));
+    const gridClr = 'rgba(255, 255, 255, 0.05)';
+    let gridlinesMarkup = '';
+    yTicks.forEach(tick => {
+      const y = height - paddingBottom - (tick / maxVal) * chartHeight;
+      gridlinesMarkup += `
+        <g style="opacity: 0.65; user-select: none;">
+          <line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" stroke="${gridClr}" stroke-width="1" stroke-dasharray="4 6" />
+          <text x="${paddingLeft - 8}" y="${y + 3}" text-anchor="end" font-size="9" fill="#888888" style="font-weight: 600; font-family: var(--font-family);">${symbol}${tick.toLocaleString()}</text>
+        </g>
+      `;
+    });
+
+    // Draw Bars
+    let barsMarkup = '';
+    const barWidth = 32;
+    const colWidth = chartWidth / monthsData.length;
+    const r = 6; // rounded top radius
+
+    monthsData.forEach((d, idx) => {
+      const colX = paddingLeft + idx * colWidth;
+      const barX = colX + (colWidth - barWidth) / 2;
+      const barHeight = (d.amount / maxVal) * chartHeight;
+      const barY = height - paddingBottom - barHeight;
+
+      if (barHeight > 0) {
+        // Round only the top corners using path
+        const rx = Math.min(r, barWidth / 2, barHeight);
+        const barPath = `
+          M ${barX} ${barY + barHeight}
+          L ${barX} ${barY + rx}
+          Q ${barX} ${barY} ${barX + rx} ${barY}
+          L ${barX + barWidth - rx} ${barY}
+          Q ${barX + barWidth} ${barY} ${barX + barWidth} ${barY + rx}
+          L ${barX + barWidth} ${barY + barHeight}
+          Z
+        `;
+        barsMarkup += `
+          <g class="bar-group" style="cursor: pointer;">
+            <title>${d.label} ${d.year}: ${symbol}${Math.round(d.amount).toLocaleString()}</title>
+            <path d="${barPath}" fill="#00e87a" class="monthly-bar-rect" />
+            <text x="${barX + barWidth/2}" y="${barY - 6}" text-anchor="middle" font-size="9" fill="#ffffff" font-weight="700" style="font-family: var(--font-family); opacity: 0; transition: opacity 0.2s;" class="bar-value-label">${symbol}${Math.round(d.amount).toLocaleString()}</text>
+          </g>
+        `;
+      }
+
+      // X Axis Label
+      barsMarkup += `
+        <text x="${colX + colWidth/2}" y="${height - paddingBottom + 16}" text-anchor="middle" font-size="10" fill="#a0a0a0" font-weight="600" style="font-family: var(--font-family);">${d.label}</text>
+      `;
+    });
+
+    container.innerHTML = `
+      <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: 100%; overflow: visible;">
+        <style>
+          .bar-group:hover .monthly-bar-rect { fill: #05c46b; }
+          .bar-group:hover .bar-value-label { opacity: 1; }
+        </style>
+        ${gridlinesMarkup}
+        ${barsMarkup}
+        <line x1="${paddingLeft}" y1="${height - paddingBottom}" x2="${width - paddingRight}" y2="${height - paddingBottom}" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+      </svg>
+    `;
+  } catch (err) {
+    console.error('Error drawing monthly spending chart:', err);
+  }
+}
+
+function renderTopCategoriesList() {
+  const container = document.getElementById('topCategoriesListContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const { year: filterYear, month: filterMonth } = getActiveMonthFilterRange();
+  const symbol = state.currencySymbol || '₹';
+
+  // Group by category
+  const categoriesMap = {};
+  let totalExpenses = 0;
+
+  state.transactions.forEach(t => {
+    if (t.type === 'expense') {
+      const d = new Date(t.date);
+      if (d.getMonth() === filterMonth && d.getFullYear() === filterYear) {
+        const amt = Number(t.amount) || 0;
+        categoriesMap[t.category] = (categoriesMap[t.category] || 0) + amt;
+        totalExpenses += amt;
+      }
+    }
+  });
+
+  const sortedCategories = Object.keys(categoriesMap)
+    .map(cat => ({
+      name: cat,
+      amount: categoriesMap[cat]
+    }))
+    .sort((a, b) => b.amount - a.amount);
+
+  if (sortedCategories.length === 0) {
+    container.innerHTML = `<p style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 20px 0; font-family: var(--font-family);">No expense data available for this period.</p>`;
+    return;
+  }
+
+  const categoryIcons = {
+    Food: '🍔',
+    Transport: '🚗',
+    Shopping: '🛍️',
+    Entertainment: '🎬',
+    Education: '📚',
+    Health: '🏥',
+    Bills: '💵',
+    Other: '💳'
+  };
+
+  let rowsHtml = '';
+  // Top 5 categories
+  sortedCategories.slice(0, 5).forEach(cat => {
+    const icon = categoryIcons[cat.name] || '💳';
+    const pct = totalExpenses > 0 ? Math.round((cat.amount / totalExpenses) * 100) : 0;
+    
+    rowsHtml += `
+      <div class="top-category-row">
+        <div class="top-category-info">
+          <span class="top-category-name">
+            <span>${icon}</span>
+            <span>${cat.name}</span>
+          </span>
+          <span class="top-category-val">
+            <span>${symbol}${Math.round(cat.amount).toLocaleString()}</span>
+            <span class="top-category-pct">(${pct}%)</span>
+          </span>
+        </div>
+        <div class="top-category-bar-track">
+          <div class="top-category-bar-fill" style="width: ${pct}%;"></div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = rowsHtml;
 }
 
 function drawTrendLineSvg() {
@@ -2447,33 +2646,28 @@ function renderCategoryBudgetsGrid() {
   });
   saveState();
 
-  // Render top YNAB allocations summary if container exists
+  // Render top YNAB allocations summary (Overview Card) if container exists
   if (summaryContainer) {
-    const unallocated = incomeInput - totalAllocated;
-    const allocatedPct = Math.round((totalAllocated / incomeInput) * 100) || 0;
+    const totalSpent = monthlyExpenses.reduce((sum, t) => sum + t.amount, 0);
+    const remaining = incomeInput - totalSpent;
+    const pct = Math.min(100, Math.round((totalSpent / incomeInput) * 100)) || 0;
     
-    let unallocatedStatusHtml = '';
-    if (unallocated < 0) {
-      unallocatedStatusHtml = `<span style="color: #ff4757; font-weight: 800;">-${symbol}${Math.abs(unallocated).toLocaleString()} (Over-allocated)</span>`;
-    } else if (unallocated > 0) {
-      unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">${symbol}${unallocated.toLocaleString()} to allocate</span>`;
-    } else {
-      unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">Perfect Zero-Based!</span>`;
-    }
+    let remainingColor = '#00e87a';
+    if (remaining < 0) remainingColor = '#ff4757';
+    else if (pct >= 85) remainingColor = '#ff9f43';
+
+    let progressColor = '#3b82f6';
+    if (remaining < 0) progressColor = '#ff4757';
+    else if (pct >= 85) progressColor = '#ff9f43';
 
     summaryContainer.innerHTML = `
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-        <div style="background: #111111; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; text-align: left;">
-          <div style="font-size: 9px; color: #606060; text-transform: uppercase; letter-spacing: 0.5px;">Monthly Inflow</div>
-          <div style="font-size: 16px; font-weight: 800; color: #f0f0f0; margin-top: 4px;">${symbol}${incomeInput.toLocaleString()}</div>
+      <div class="glass-panel" style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+          <span style="font-size: 20px; font-weight: 800; color: ${remainingColor}; font-family: var(--font-family);">${symbol}${remaining.toLocaleString()} Remaining</span>
+          <span style="font-size: 11px; color: #a0a0a0; font-weight: 700; font-family: var(--font-family);">Spent ${symbol}${totalSpent.toLocaleString()} of ${symbol}${incomeInput.toLocaleString()}</span>
         </div>
-        <div style="background: #111111; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; text-align: left;">
-          <div style="font-size: 9px; color: #606060; text-transform: uppercase; letter-spacing: 0.5px;">Allocated Budget</div>
-          <div style="font-size: 16px; font-weight: 800; color: #f0f0f0; margin-top: 4px;">${symbol}${totalAllocated.toLocaleString()} <span style="font-size: 10px; color: #606060; font-weight: 500;">(${allocatedPct}%)</span></div>
-        </div>
-        <div style="background: #111111; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; text-align: left;">
-          <div style="font-size: 9px; color: #606060; text-transform: uppercase; letter-spacing: 0.5px;">Remaining Headroom</div>
-          <div style="font-size: 14px; font-weight: 800; margin-top: 4px;">${unallocatedStatusHtml}</div>
+        <div style="width: 100%; height: 8px; background: #161616; border-radius: 4px; overflow: hidden; margin-top: 12px;">
+          <div style="width: ${pct}%; height: 100%; border-radius: 4px; transition: width 0.3s ease, background-color 0.3s ease; background-color: ${progressColor};"></div>
         </div>
       </div>
     `;
@@ -2486,9 +2680,18 @@ function renderCategoryBudgetsGrid() {
     const spent = monthlyExpenses.filter(t => t.category === cat).reduce((sum, t) => sum + t.amount, 0);
     const pct = Math.min(100, Math.round((spent / Math.max(1, val)) * 100));
 
-    let barClr = 'bg-indigo-500';
-    if (pct >= 90) barClr = 'bg-rose-500';
-    else if (pct >= 75) barClr = 'bg-amber-500';
+    let barClr = 'bg-[#00e87a]';
+    let overBadge = '';
+    
+    if (spent > val) {
+      barClr = 'bg-rose-500';
+      overBadge = `
+        <span class="budget-warning-badge" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); margin-top: 2px;">
+          ⚠️ Over budget
+        </span>`;
+    } else if (pct >= 85) {
+      barClr = 'bg-amber-500';
+    }
 
     const remaining = val - spent;
     let leftText = '';
@@ -2512,8 +2715,11 @@ function renderCategoryBudgetsGrid() {
     card.style.gap = '8px';
 
     card.innerHTML = `
-      <div class="cat-budget-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-        <span class="cat-budget-name text-zinc-200" style="font-weight: 700; font-size: 13px;">${cat}</span>
+      <div class="cat-budget-header" style="display: flex; justify-content: space-between; align-items: start; width: 100%;">
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
+          <span class="cat-budget-name text-zinc-200" style="font-weight: 700; font-size: 13px;">${cat}</span>
+          ${overBadge}
+        </div>
         <div class="cat-budget-input-wrapper" style="display: flex; align-items: center; gap: 4px; background: #1c1c1c; border: 1px solid var(--border-color); border-radius: 8px; padding: 2px 8px; height: 28px;">
           <span class="cat-budget-limit-label" style="font-size: 10px; color: #606060; font-weight: 800;">${symbol}</span>
           <input 
@@ -2551,6 +2757,32 @@ function renderCategoryBudgetsGrid() {
     `;
     container.appendChild(card);
   });
+
+  // Render Savings Tip Card
+  const tipContainer = document.getElementById('budgetsSavingsTipCard');
+  if (tipContainer) {
+    const overBudgetCats = categories.filter(cat => {
+      const limit = state.categoryBudgets[cat] || 0;
+      const spent = monthlyExpenses.filter(t => t.category === cat).reduce((sum, t) => sum + t.amount, 0);
+      return spent > limit;
+    });
+
+    let tipText = "You are doing great! All categories are within their YNAB limits this month.";
+    if (overBudgetCats.length > 0) {
+      tipText = `You could save next month by reducing your expenditures on <strong>${overBudgetCats.join(', ')}</strong>, where you exceeded the allowance limits.`;
+    }
+    
+    tipContainer.innerHTML = `
+      <div class="glass-panel" style="background: rgba(0, 232, 122, 0.03); border: 1px solid rgba(0, 232, 122, 0.15); border-radius: 12px; padding: 16px; text-align: left; display: flex; align-items: start; gap: 12px;">
+        <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(0, 232, 122, 0.1); color: #00e87a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i data-lucide="lightbulb" style="width: 14px; height: 14px;"></i></div>
+        <div style="text-align: left; font-size: 11px; color: #a0a0a0; line-height: 1.5; font-family: var(--font-family); flex: 1;">
+          <strong style="color: #00e87a; display: block; margin-bottom: 2px; font-size: 12px;">Savings Tip</strong>
+          <span>${tipText}</span>
+        </div>
+      </div>
+    `;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
 
   // Bind change event to text inputs
   document.querySelectorAll('.cat-budget-input').forEach(input => {
@@ -2596,29 +2828,37 @@ function updateYnabSummaryLive(incomeInput, symbol) {
   const summaryContainer = document.getElementById('catBudgetsSummary');
   if (!summaryContainer) return;
 
-  const categories = state.categories || Object.keys(state.categoryBudgets);
-  let totalAllocated = 0;
-  categories.forEach(cat => {
-    totalAllocated += (state.categoryBudgets[cat] || 0);
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const monthlyExpenses = state.transactions.filter(t => {
+    const d = new Date(t.date);
+    return t.type === 'expense' && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
 
-  const unallocated = incomeInput - totalAllocated;
-  const allocatedPct = Math.round((totalAllocated / incomeInput) * 100) || 0;
+  const totalSpent = monthlyExpenses.reduce((sum, t) => sum + t.amount, 0);
+  const remaining = incomeInput - totalSpent;
+  const pct = Math.min(100, Math.round((totalSpent / incomeInput) * 100)) || 0;
   
-  let unallocatedStatusHtml = '';
-  if (unallocated < 0) {
-    unallocatedStatusHtml = `<span style="color: #ff4757; font-weight: 800;">-${symbol}${Math.abs(unallocated).toLocaleString()} (Over-allocated)</span>`;
-  } else if (unallocated > 0) {
-    unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">${symbol}${unallocated.toLocaleString()} to allocate</span>`;
-  } else {
-    unallocatedStatusHtml = `<span style="color: #00e87a; font-weight: 800;">Perfect Zero-Based!</span>`;
-  }
+  let remainingColor = '#00e87a';
+  if (remaining < 0) remainingColor = '#ff4757';
+  else if (pct >= 85) remainingColor = '#ff9f43';
 
-  const divs = summaryContainer.querySelectorAll('div > div');
-  if (divs.length === 3) {
-    divs[1].querySelector('div:last-child').innerHTML = `${symbol}${totalAllocated.toLocaleString()} <span style="font-size: 10px; color: #606060; font-weight: 500;">(${allocatedPct}%)</span>`;
-    divs[2].querySelector('div:last-child').innerHTML = unallocatedStatusHtml;
-  }
+  let progressColor = '#3b82f6';
+  if (remaining < 0) progressColor = '#ff4757';
+  else if (pct >= 85) progressColor = '#ff9f43';
+
+  summaryContainer.innerHTML = `
+    <div class="glass-panel" style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+        <span style="font-size: 20px; font-weight: 800; color: ${remainingColor}; font-family: var(--font-family);">${symbol}${remaining.toLocaleString()} Remaining</span>
+        <span style="font-size: 11px; color: #a0a0a0; font-weight: 700; font-family: var(--font-family);">Spent ${symbol}${totalSpent.toLocaleString()} of ${symbol}${incomeInput.toLocaleString()}</span>
+      </div>
+      <div style="width: 100%; height: 8px; background: #161616; border-radius: 4px; overflow: hidden; margin-top: 12px;">
+        <div style="width: ${pct}%; height: 100%; border-radius: 4px; transition: width 0.3s ease, background-color 0.3s ease; background-color: ${progressColor};"></div>
+      </div>
+    </div>
+  `;
 }
 
 function updateYnabCardDetailsLive(cat, val, monthlyExpenses, symbol) {
@@ -2634,9 +2874,32 @@ function updateYnabCardDetailsLive(cat, val, monthlyExpenses, symbol) {
   const progressBar = card.querySelector('.cat-budget-progress-bar');
   if (progressBar) {
     progressBar.style.width = `${pct}%`;
-    progressBar.className = 'cat-budget-progress-bar bg-indigo-500';
-    if (pct >= 90) progressBar.className = 'cat-budget-progress-bar bg-rose-500';
-    else if (pct >= 75) progressBar.className = 'cat-budget-progress-bar bg-amber-500';
+    if (spent > val) {
+      progressBar.className = 'cat-budget-progress-bar bg-rose-500';
+    } else if (pct >= 85) {
+      progressBar.className = 'cat-budget-progress-bar bg-amber-500';
+    } else {
+      progressBar.className = 'cat-budget-progress-bar bg-[#00e87a]';
+    }
+  }
+
+  // Update badge live
+  const headerCol = card.querySelector('.cat-budget-header > div');
+  if (headerCol) {
+    let badge = headerCol.querySelector('.budget-warning-badge');
+    if (spent > val) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'budget-warning-badge';
+        badge.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); margin-top: 2px;';
+        badge.innerHTML = '⚠️ Over budget';
+        headerCol.appendChild(badge);
+      }
+    } else {
+      if (badge) {
+        badge.remove();
+      }
+    }
   }
 
   // Update remaining text
@@ -3194,12 +3457,13 @@ function setupGlobalEventListeners() {
       const viewTitle = document.getElementById('currentViewTitle');
       if (viewTitle) {
         const titles = {
-          analytics: 'Overview',
+          analytics: 'Analytics',
           ledger: 'Transactions',
           insights: 'Coach Hub',
           budgets: 'YNAB Limits',
           savings: 'Savings Vault',
-          events: 'Collections'
+          events: 'Collections',
+          settings: 'Settings'
         };
         viewTitle.innerText = titles[targetTab] || 'Dashboard';
       }
@@ -3213,6 +3477,8 @@ function setupGlobalEventListeners() {
       if (savingsPanel) savingsPanel.style.display = 'none';
       const eventsPanel = document.getElementById('tab-panel-events');
       if (eventsPanel) eventsPanel.style.display = 'none';
+      const settingsPanel = document.getElementById('tab-panel-settings');
+      if (settingsPanel) settingsPanel.style.display = 'none';
 
       if (targetTab === 'analytics') {
         document.getElementById('tab-panel-analytics').style.display = 'flex';
@@ -3233,6 +3499,9 @@ function setupGlobalEventListeners() {
       } else if (targetTab === 'events') {
         if (eventsPanel) eventsPanel.style.display = 'flex';
         closeCollectionSheet();
+      } else if (targetTab === 'settings') {
+        if (settingsPanel) settingsPanel.style.display = 'flex';
+        loadSettingsTabValues();
       }
     });
   });
@@ -3573,35 +3842,51 @@ function setupGlobalEventListeners() {
   const closeSettings = document.getElementById('closeSettingsBtn');
   const closeSettingsX = document.getElementById('closeSettingsXBtn');
 
+  function loadSettingsTabValues() {
+    const uNameInput = document.getElementById('stUserName');
+    if (uNameInput) uNameInput.value = state.userName || 'Shekhar';
+    
+    const uAvatarCircle = document.getElementById('settingsAvatarCircle');
+    if (uAvatarCircle) uAvatarCircle.innerText = (state.userName || 'S').charAt(0).toUpperCase();
+
+    const occupationSelect = document.getElementById('stOccupation');
+    if (occupationSelect) occupationSelect.value = state.occupation || 'Student';
+
+    const currencySelect = document.getElementById('stCurrencySymbol');
+    if (currencySelect) currencySelect.value = state.currencySymbol || '₹';
+
+    const incomeValInput = document.getElementById('stIncomeVal');
+    if (incomeValInput) incomeValInput.value = state.income || 0;
+
+    const initialBalValInput = document.getElementById('stInitialBalanceVal');
+    if (initialBalValInput) initialBalValInput.value = state.initialBalance || 0;
+
+    const budgetPeriodSelect = document.getElementById('stBudgetType');
+    if (budgetPeriodSelect) budgetPeriodSelect.value = state.budget_period || 'daily';
+
+    const budgetValInput = document.getElementById('stBudgetVal');
+    if (budgetValInput) budgetValInput.value = state.budgetValue || 0;
+
+    // Trigger Lucide icons creation for the new page
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
   const triggerSettingsOpenWithFocus = (focusId) => {
-    if (settingsOverlay) {
-      settingsOverlay.classList.add('open');
-      // Load values into settings inputs
-      const uNameInput = document.getElementById('stUserName');
-      if (uNameInput) {
-        uNameInput.value = state.userName || 'Shekhar';
-      }
-      document.getElementById('stIncomeVal').value = state.income;
-      document.getElementById('stInitialBalanceVal').value = state.initialBalance || 0;
-      document.getElementById('stBudgetVal').value = state.budgetValue;
-      document.getElementById('stBudgetType').value = state.budget_period;
-
-      const settingsIcon = document.getElementById('stIncomeIcon');
-      if (settingsIcon) {
-        const currencyIcons = { '₹': 'indian-rupee', '$': 'dollar-sign', '£': 'pound-sterling', '€': 'euro' };
-        const iconName = currencyIcons[state.currencySymbol || '₹'] || 'wallet';
-        settingsIcon.setAttribute('data-lucide', iconName);
-        lucide.createIcons();
-      }
-
-      // Focus and highlight specific field
-      const inputEl = document.getElementById(focusId);
-      if (inputEl) {
-        setTimeout(() => {
-          inputEl.focus();
-          inputEl.select();
-        }, 120);
-      }
+    // Switch to Settings tab
+    const settingsTabBtn = document.querySelector('.tab-btn[data-tab="settings"]');
+    if (settingsTabBtn) {
+      settingsTabBtn.click();
+    }
+    
+    // Focus and highlight specific field
+    const inputEl = document.getElementById(focusId);
+    if (inputEl) {
+      setTimeout(() => {
+        inputEl.focus();
+        inputEl.select();
+      }, 120);
     }
   };
 
@@ -3634,114 +3919,145 @@ function setupGlobalEventListeners() {
 
   if (closeSettings) {
     closeSettings.addEventListener('click', () => {
-      settingsOverlay.classList.remove('open');
+      if (settingsOverlay) settingsOverlay.classList.remove('open');
     });
   }
 
   if (closeSettingsX) {
     closeSettingsX.addEventListener('click', () => {
-      settingsOverlay.classList.remove('open');
+      if (settingsOverlay) settingsOverlay.classList.remove('open');
     });
   }
 
-  // Save Settings Modal
-  document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-    const incVal = parseFloat(document.getElementById('stIncomeVal').value);
-    const initialBalVal = parseFloat(document.getElementById('stInitialBalanceVal').value) || 0;
-    const limitVal = parseFloat(document.getElementById('stBudgetVal').value);
-    const typeVal = document.getElementById('stBudgetType').value;
-    const uNameInput = document.getElementById('stUserName');
+  // Save Settings
+  const saveBtn = document.getElementById('saveSettingsBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      const incVal = parseFloat(document.getElementById('stIncomeVal').value);
+      const initialBalVal = parseFloat(document.getElementById('stInitialBalanceVal').value) || 0;
+      const limitVal = parseFloat(document.getElementById('stBudgetVal').value);
+      const typeVal = document.getElementById('stBudgetType').value;
+      const uNameInput = document.getElementById('stUserName');
+      const stOccupation = document.getElementById('stOccupation');
+      const stCurrencySymbol = document.getElementById('stCurrencySymbol');
 
-    if (isNaN(incVal) || incVal <= 0 || isNaN(limitVal) || limitVal <= 0) {
-      showToast('Values must be greater than zero.', 'error');
-      return;
-    }
+      if (isNaN(incVal) || incVal <= 0 || isNaN(limitVal) || limitVal <= 0) {
+        showToast('Values must be greater than zero.', 'error');
+        return;
+      }
 
-    if (uNameInput && uNameInput.value.trim()) {
-      state.userName = uNameInput.value.trim();
-    }
+      if (uNameInput && uNameInput.value.trim()) {
+        state.userName = uNameInput.value.trim();
+        
+        // Update sidebar and top headers greeting name
+        const sideName = document.getElementById('sidebarProfileName');
+        if (sideName) sideName.innerText = state.userName;
+        const sideAvatar = document.getElementById('sidebarAvatar');
+        if (sideAvatar) sideAvatar.innerText = state.userName.charAt(0).toUpperCase();
+        const settingsAvatarCircle = document.getElementById('settingsAvatarCircle');
+        if (settingsAvatarCircle) settingsAvatarCircle.innerText = state.userName.charAt(0).toUpperCase();
+        const obGreeting = document.getElementById('dashboardGreetingName');
+        if (obGreeting) obGreeting.innerText = state.userName + ' 👋';
+      }
 
-    state.income = incVal;
-    state.initialBalance = initialBalVal;
-    state.budgetValue = limitVal;
-    state.budget_period = typeVal;
-    saveState();
+      if (stOccupation) {
+        state.occupation = stOccupation.value;
+      }
+      if (stCurrencySymbol) {
+        state.currencySymbol = stCurrencySymbol.value;
+      }
 
-    // Trigger full reactive updates across allowances and charts
-    refreshDashboard();
+      state.income = incVal;
+      state.initialBalance = initialBalVal;
+      state.budgetValue = limitVal;
+      state.budget_period = typeVal;
+      saveState();
 
-    settingsOverlay.classList.remove('open');
-    showToast('Dashboard configurations saved', 'success');
-  });
+      // Trigger full reactive updates across allowances and charts
+      refreshDashboard();
+
+      if (settingsOverlay) settingsOverlay.classList.remove('open');
+      showToast('Dashboard configurations saved', 'success');
+    });
+  }
 
   // DB Export backups trigger
-  document.getElementById('backupExportBtn').addEventListener('click', handleExportBackup);
+  const backupExport = document.getElementById('backupExportBtn');
+  if (backupExport) {
+    backupExport.addEventListener('click', handleExportBackup);
+  }
 
   // DB Import backups trigger
   const fileIn = document.getElementById('backupFileInput');
-  document.getElementById('backupImportBtn').addEventListener('click', () => fileIn.click());
-  fileIn.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const backupImport = document.getElementById('backupImportBtn');
+  if (backupImport && fileIn) {
+    backupImport.addEventListener('click', () => fileIn.click());
+    fileIn.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function (evt) {
-      try {
-        const imported = JSON.parse(evt.target.result);
-        if (imported.income && imported.budget_period && Array.isArray(imported.transactions)) {
-          state = { ...state, ...imported, onboardingCompleted: true };
-          saveState();
-          applyTheme(state.theme);
-          showDashboardView();
-          settingsOverlay.classList.remove('open');
-          showToast('Database restore complete!', 'success');
-        } else {
-          showToast('Invalid JSON file format.', 'error');
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (imported.income && imported.budget_period && Array.isArray(imported.transactions)) {
+            state = { ...state, ...imported, onboardingCompleted: true };
+            saveState();
+            applyTheme(state.theme);
+            showDashboardView();
+            if (settingsOverlay) settingsOverlay.classList.remove('open');
+            showToast('Database restore complete!', 'success');
+          } else {
+            showToast('Invalid JSON file format.', 'error');
+          }
+        } catch (err) {
+          showToast('JSON parse error occurred.', 'error');
         }
-      } catch (err) {
-        showToast('JSON parse error occurred.', 'error');
-      }
-    };
-    reader.readAsText(file);
-  });
+      };
+      reader.readAsText(file);
+    });
+  }
 
   // Danger resets formatting data
-  document.getElementById('resetDataBtn').addEventListener('click', () => {
-    if (confirm('Format database? This resets all transactions and allowances.')) {
-      localStorage.removeItem('montra_student_state');
-      state = {
-        income: 3000,
-        initialBalance: 0,
-        fixedExpenses: [
-          { id: 'fx-1', name: 'Housing Rent', amount: 1200, frequency: 'monthly', paid: false },
-          { id: 'fx-2', name: 'Phone Plan', amount: 45, frequency: 'monthly', paid: false },
-          { id: 'fx-3', name: 'Gym / Sports', amount: 60, frequency: 'monthly', paid: false }
-        ],
-        budget_period: 'daily',
-        budgetValue: 60,
-        categoryBudgets: {
-          Food: 300,
-          Transport: 100,
-          Shopping: 200,
-          Entertainment: 150,
-          Education: 150,
-          Health: 100,
-          Bills: 1400,
-          Other: 100
-        },
-        transactions: [],
-        theme: state.theme,
-        onboardingCompleted: false,
-        currencySymbol: '₹',
-        occupation: 'Student'
-      };
-      saveState();
-      settingsOverlay.classList.remove('open');
-      showOnboardingView();
-      initOnboardingUI();
-      showToast('System formatted successfully', 'info');
-    }
-  });
+  const resetBtn = document.getElementById('resetDataBtn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Format database? This resets all transactions and allowances.')) {
+        localStorage.removeItem('montra_student_state');
+        state = {
+          income: 3000,
+          initialBalance: 0,
+          fixedExpenses: [
+            { id: 'fx-1', name: 'Housing Rent', amount: 1200, frequency: 'monthly', paid: false },
+            { id: 'fx-2', name: 'Phone Plan', amount: 45, frequency: 'monthly', paid: false },
+            { id: 'fx-3', name: 'Gym / Sports', amount: 60, frequency: 'monthly', paid: false }
+          ],
+          budget_period: 'daily',
+          budgetValue: 60,
+          categoryBudgets: {
+            Food: 300,
+            Transport: 100,
+            Shopping: 200,
+            Entertainment: 150,
+            Education: 150,
+            Health: 100,
+            Bills: 1400,
+            Other: 100
+          },
+          transactions: [],
+          theme: state.theme,
+          onboardingCompleted: false,
+          currencySymbol: '₹',
+          occupation: 'Student'
+        };
+        saveState();
+        if (settingsOverlay) settingsOverlay.classList.remove('open');
+        showOnboardingView();
+        initOnboardingUI();
+        showToast('System formatted successfully', 'info');
+      }
+    });
+  }
 
   // Global Theme Toggles sun/moon
   const themeToggle = document.getElementById('themeToggleBtn');

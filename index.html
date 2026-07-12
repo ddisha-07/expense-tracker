@@ -559,8 +559,8 @@
       </div>
       <nav class="sidebar-nav">
         <button class="tab-btn active" data-tab="analytics" type="button">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          Overview
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          Analytics
         </button>
         <button class="tab-btn" data-tab="ledger" type="button">
           <i data-lucide="receipt" class="w-4 h-4"></i>
@@ -579,7 +579,7 @@
           Collections
           <span class="collections-count-badge" id="sidebarCollectionsBadge">0</span>
         </button>
-        <button class="tab-btn" id="sidebarSettingsBtn" type="button">
+        <button class="tab-btn" data-tab="settings" id="sidebarSettingsBtn" type="button">
           <i data-lucide="settings" class="w-4 h-4"></i>
           Settings
         </button>
@@ -704,69 +704,53 @@
 
         <div class="main-tab-panel" style="margin-top: 10px;">
 
-        <!-- Tab panel 1: Dashboard Analytics -->
-        <div class="dashboard-charts-subgrid animate-fadeIn" id="tab-panel-analytics">
+          <!-- Tab panel 1: Dashboard Analytics -->
+          <div class="dashboard-charts-subgrid animate-fadeIn" id="tab-panel-analytics">
 
-          <!-- Charts Split Grid (2:1 ratio) -->
-          <div class="charts-split-grid" style="display: grid; grid-template-columns: 2fr 1.1fr; gap: 20px; width: 100%;">
-            
-            <!-- Line trend SVG chart card (Cash Flow) -->
-            <article class="card-chart-large glass-panel hover:scale-[1.002] duration-300" style="margin-bottom: 0;">
-              <div class="chart-header-row">
-                <div>
-                  <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 14px; font-weight: 700;">Cash Flow</h3>
-                  <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family);">Income vs Expenses — last 7 days</span>
+              <!-- Monthly Spending SVG bar chart card -->
+              <article class="glass-panel hover:scale-[1.002] duration-300" style="padding: 24px; border-radius: 20px; width: 100%; box-sizing: border-box;">
+                <div class="chart-header-row" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 14px; font-weight: 700; margin: 0;">Monthly Spending</h3>
+                    <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Historical spending — last 6 months</span>
+                  </div>
                 </div>
-                <div style="display: flex; gap: 14px; align-items: center; user-select: none;">
-                  <span
-                    style="font-size: 10px; font-weight: 800; color: #00e87a; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family);">
-                    <span
-                      style="width: 7px; height: 7px; border-radius: 50%; background-color: #00e87a; display: inline-block; box-shadow: 0 0 6px rgba(0, 232, 122, 0.4);"></span>
-                    Income
-                  </span>
-                  <span
-                    style="font-size: 10px; font-weight: 800; color: #ff4757; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family);">
-                    <span
-                      style="width: 7px; height: 7px; border-radius: 50%; background-color: #ff4757; display: inline-block; box-shadow: 0 0 6px rgba(255, 71, 87, 0.4);"></span>
-                    Expenses
-                  </span>
+                <div class="monthly-bar-chart-container" id="monthlySpendingChartContainer">
+                  <!-- SVG injected dynamically by app.js -->
                 </div>
-              </div>
-              <div class="chart-canvas-container" id="trendLineChartContainer">
-                <!-- Animated SVG path injected dynamically by app.js -->
-              </div>
-            </article>
+              </article>
 
-            <!-- Category Donut SVG chart card (By Category) -->
-            <article class="card-chart-half glass-panel hover:scale-[1.002] duration-300" style="height: 100%; display: flex; flex-direction: column; padding: 24px;">
-              <div class="chart-header-row" style="margin-bottom: 12px;">
-                <div>
-                  <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 14px; font-weight: 700;">By Category</h3>
-                  <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family);">Spending breakdown</span>
-                </div>
-              </div>
-              <div class="chart-canvas-container" id="categoryDonutChartContainer" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 150px;">
-                <!-- SVG Circle elements slices injected by app.js -->
-              </div>
-            </article>
+              <!-- Bottom breakdown and list split grid -->
+              <div class="analytics-grid-two-cols" style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 20px; width: 100%; margin-top: 20px; box-sizing: border-box;">
+                
+                <!-- Category Donut SVG chart card (By Category) -->
+                <article class="glass-panel hover:scale-[1.002] duration-300" style="display: flex; flex-direction: column; padding: 24px; border-radius: 20px;">
+                  <div class="chart-header-row" style="margin-bottom: 20px;">
+                    <div>
+                      <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 14px; font-weight: 700; margin: 0;">Category Breakdown</h3>
+                      <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Spending percentage by category</span>
+                    </div>
+                  </div>
+                  <div class="chart-canvas-container" id="categoryDonutChartContainer" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 180px;">
+                    <!-- SVG Circle elements slices injected by app.js -->
+                  </div>
+                </article>
 
-          </div>
+                <!-- Top Spending Categories List Card -->
+                <article class="glass-panel hover:scale-[1.002] duration-300" style="display: flex; flex-direction: column; padding: 24px; border-radius: 20px;">
+                  <div class="chart-header-row" style="margin-bottom: 20px;">
+                    <div>
+                      <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 14px; font-weight: 700; margin: 0;">Top Categories</h3>
+                      <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Highest expenditure areas</span>
+                    </div>
+                  </div>
+                  <div class="top-categories-list" id="topCategoriesListContainer" style="flex: 1; display: flex; flex-direction: column; gap: 14px; justify-content: center;">
+                    <!-- Dynamically populated rows with progress bars in app.js -->
+                  </div>
+                </article>
 
-          <!-- Recent Transactions Card (Full width under charts) -->
-          <article class="glass-panel hover:scale-[1.002] duration-300" style="padding: 24px; border-radius: 20px;">
-            <div class="chart-header-row" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 14px; font-weight: 700; margin: 0;">Recent Transactions</h3>
-                <span class="text-[10px] text-zinc-500 font-semibold block" id="dashRecentTransactionsCount" style="font-family: var(--font-family); margin-top: 4px;">0 entries this month</span>
               </div>
-              <button class="text-xs text-[#00e87a] hover:text-[#00e87a]/70 transition-colors flex items-center gap-1" id="dashViewAllBtn" type="button" style="background: transparent; border: none; cursor: pointer; font-family: var(--font-family); font-weight: 700; outline: none; padding: 0;">
-                View all →
-              </button>
             </div>
-            <div class="space-y-0.5" id="dashRecentTransactionsList" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Injected dynamically by app.js (up to 8 items) -->
-            </div>
-          </article>
 
         <!-- Tab panel 2: Transaction Ledger List -->
         <div class="ledger-tab-panel glass-panel animate-fadeIn" id="tab-panel-ledger" style="display: none;">
@@ -888,6 +872,11 @@
 
             <div class="cat-budgets-grid" id="catBudgetsGrid">
               <!-- Injected by app.js -->
+            </div>
+
+            <!-- Savings Tip Card -->
+            <div id="budgetsSavingsTipCard" style="margin-top: 24px;">
+              <!-- Injected dynamically by app.js -->
             </div>
           </div>
         </div>
@@ -1036,6 +1025,265 @@
             </div>
 
           </div>
+        </div>
+
+        <!-- Tab panel 6: Settings -->
+        <div class="settings-tab-panel animate-fadeIn" id="tab-panel-settings" style="display: none; width: 100%;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%;">
+            <div>
+              <h3 class="chart-title text-zinc-100" style="font-family: var(--font-family); font-size: 15px; font-weight: 700; margin: 0;">Settings</h3>
+              <span class="text-[10px] text-zinc-500 font-semibold block" style="font-family: var(--font-family); margin-top: 4px;">Calibrate currency, occupation budgets, and database backups</span>
+            </div>
+          </div>
+
+          <div class="settings-layout-grid">
+            
+            <!-- COLUMN 1: Profile & General Preferences -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- Card 1: Profile Details -->
+              <div class="settings-card">
+                <div class="settings-card-title">
+                  <i data-lucide="user" class="w-4 h-4 text-[#00e87a]"></i>
+                  Profile Details
+                </div>
+                
+                <div class="settings-profile-avatar-row">
+                  <div class="settings-avatar-circle" id="settingsAvatarCircle">S</div>
+                  <div class="settings-avatar-actions">
+                    <button type="button" class="primary-btn" style="background: var(--border-color); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 750; border-radius: 8px; height: 28px; font-size: 10px; padding: 0 12px;" onclick="showToast('Profile image change is disabled in demo mode.', 'info')">Change Image</button>
+                    <span style="font-size: 9px; color: var(--text-muted); margin-top: 2px;">JPG or PNG, max 1MB</span>
+                  </div>
+                </div>
+
+                <div class="mb-4" style="text-align: left; margin-bottom: 16px;">
+                  <label class="input-label-tag" for="stUserName">Your Name</label>
+                  <div class="st-input-wrapper" style="margin-bottom: 0;">
+                    <i data-lucide="user" class="st-input-icon"></i>
+                    <input class="st-input-box" id="stUserName" type="text" placeholder="Enter your name..." style="padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                  </div>
+                </div>
+
+                <div style="text-align: left; margin-bottom: 16px;">
+                  <label class="input-label-tag" for="stOccupation">Occupation Profile</label>
+                  <div class="st-input-wrapper">
+                    <i data-lucide="briefcase" class="st-input-icon"></i>
+                    <select class="st-input-box" id="stOccupation" style="cursor: pointer; padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                      <option value="Student">Student (70% Cap)</option>
+                      <option value="Working">Earning (50% Cap)</option>
+                      <option value="Freelancer">Freelancer (60% Cap)</option>
+                      <option value="Other">Other (65% Cap)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                  <button class="primary-btn" id="saveSettingsBtn" type="button" style="width: 100%; border-radius: 12px; height: 38px; background: #00e87a; color: #080808; font-weight: 700;">Save Changes</button>
+                </div>
+              </div>
+
+              <!-- Card 2: Currency & General Preferences -->
+              <div class="settings-card">
+                <div class="settings-card-title">
+                  <i data-lucide="globe" class="w-4 h-4 text-[#00e87a]"></i>
+                  Preferences
+                </div>
+                
+                <div style="text-align: left; margin-bottom: 16px;">
+                  <label class="input-label-tag" for="stCurrencySymbol">Default Currency</label>
+                  <div class="st-input-wrapper">
+                    <i data-lucide="globe" class="st-input-icon" id="stCurrencyIcon"></i>
+                    <select class="st-input-box" id="stCurrencySymbol" style="cursor: pointer; padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                      <option value="₹">₹ INR (India)</option>
+                      <option value="$">$ USD (USA)</option>
+                      <option value="£">£ GBP (UK)</option>
+                      <option value="€">€ EUR (Europe)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="text-align: left; margin-bottom: 0;">
+                  <label class="input-label-tag" for="stDateFormat">Date Format</label>
+                  <div class="st-input-wrapper">
+                    <i data-lucide="calendar" class="st-input-icon"></i>
+                    <select class="st-input-box" id="stDateFormat" style="cursor: pointer; padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                      <option value="YYYY-MM-DD">YYYY-MM-DD (2026-07-11)</option>
+                      <option value="DD-MM-YYYY">DD-MM-YYYY (11-07-2026)</option>
+                      <option value="MM/DD/YYYY">MM/DD/YYYY (07/11/2026)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3: Security Options -->
+              <div class="settings-card">
+                <div class="settings-card-title">
+                  <i data-lucide="lock" class="w-4 h-4 text-[#00e87a]"></i>
+                  Security
+                </div>
+                
+                <div class="settings-form-row">
+                  <div class="settings-row-label">
+                    <span class="settings-row-title">Change Password</span>
+                    <span class="settings-row-desc">Update your login security credentials.</span>
+                  </div>
+                  <button type="button" class="primary-btn" style="background: var(--border-color); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 750; border-radius: 8px; height: 28px; font-size: 10px; padding: 0 12px;" onclick="showToast('Password change is not available in demo mode.', 'info')">Change</button>
+                </div>
+
+                <div class="settings-form-row">
+                  <div class="settings-row-label">
+                    <span class="settings-row-title">Two-Factor Authentication</span>
+                    <span class="settings-row-desc">Secure account with OTP codes.</span>
+                  </div>
+                  <label class="switch-container">
+                    <input type="checkbox" id="stEnable2FA" onchange="showToast('2FA option modified', 'success')">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- COLUMN 2: YNAB Budgets & Notifications & Backups -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- Card 4: YNAB Budget Allowances -->
+              <div class="settings-card">
+                <div class="settings-card-title">
+                  <i data-lucide="wallet" class="w-4 h-4 text-[#00e87a]"></i>
+                  Budget allowances
+                </div>
+
+                <div class="mb-4" style="text-align: left; margin-bottom: 16px;">
+                  <label class="input-label-tag" for="stIncomeVal">Modify Monthly Funds</label>
+                  <div class="st-input-wrapper">
+                    <i data-lucide="wallet" class="st-input-icon" id="stIncomeIcon"></i>
+                    <input class="st-input-box" id="stIncomeVal" type="number" placeholder="Enter income..." style="padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                  </div>
+                </div>
+
+                <div class="mb-4" style="text-align: left; margin-bottom: 16px;">
+                  <label class="input-label-tag" for="stInitialBalanceVal">Starting Balance</label>
+                  <div class="st-input-wrapper">
+                    <i data-lucide="piggy-bank" class="st-input-icon"></i>
+                    <input class="st-input-box" id="stInitialBalanceVal" type="number" placeholder="Enter starting balance..." style="padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                  <div style="text-align: left;">
+                    <label class="input-label-tag" for="stBudgetType">Limit Period</label>
+                    <div class="st-input-wrapper">
+                      <i data-lucide="calendar" class="st-input-icon"></i>
+                      <select class="st-input-box" id="stBudgetType" style="cursor: pointer; padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                        <option value="daily">Daily allowance</option>
+                        <option value="weekly">Weekly allowance</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="text-align: left;">
+                    <label class="input-label-tag" for="stBudgetVal">Allowance Cap</label>
+                    <div class="st-input-wrapper">
+                      <i data-lucide="compass" class="st-input-icon"></i>
+                      <input class="st-input-box" id="stBudgetVal" type="number" placeholder="Cap amount..." style="padding-left: 42px; border-radius: 12px; font-size: 13px; height: 38px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 5: Notifications -->
+              <div class="settings-card">
+                <div class="settings-card-title">
+                  <i data-lucide="bell" class="w-4 h-4 text-[#00e87a]"></i>
+                  Notifications
+                </div>
+                
+                <div class="settings-form-row">
+                  <div class="settings-row-label">
+                    <span class="settings-row-title">Weekly Summary Report</span>
+                    <span class="settings-row-desc">Receive analytical digests every Sunday.</span>
+                  </div>
+                  <label class="switch-container">
+                    <input type="checkbox" id="stNotifyWeekly" checked onchange="showToast('Weekly notifications preference updated', 'success')">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="settings-form-row">
+                  <div class="settings-row-label">
+                    <span class="settings-row-title">Over-budget Limit Alerts</span>
+                    <span class="settings-row-desc">Alert immediately on category overruns.</span>
+                  </div>
+                  <label class="switch-container">
+                    <input type="checkbox" id="stNotifyOverBudget" checked onchange="showToast('Budget alerts preference updated', 'success')">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="settings-form-row">
+                  <div class="settings-row-label">
+                    <span class="settings-row-title">Large Transaction Alerts</span>
+                    <span class="settings-row-desc">Warn if transaction exceeds 20% budget.</span>
+                  </div>
+                  <label class="switch-container">
+                    <input type="checkbox" id="stNotifyLargeTx" onchange="showToast('Large transactions alert preference updated', 'success')">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Card 6: Database Control & backups -->
+              <div class="settings-card">
+                <div class="settings-card-title">
+                  <i data-lucide="database" class="w-4 h-4 text-[#00e87a]"></i>
+                  Backups & Data Control
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                  
+                  <!-- Save Backup Row -->
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #161616; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(0, 232, 122, 0.1); color: #00e87a; display: flex; align-items: center; justify-content: center;"><i data-lucide="download" style="width: 14px; height: 14px;"></i></div>
+                      <div style="text-align: left;">
+                        <h4 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0;">Backup Data</h4>
+                        <p style="font-size: 9px; color: var(--text-muted); margin: 2px 0 0 0;">Download database JSON file</p>
+                      </div>
+                    </div>
+                    <button class="primary-btn" id="backupExportBtn" type="button" style="background: var(--border-color); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 750; border-radius: 8px; height: 28px; font-size: 10px; padding: 0 12px;">Backup</button>
+                  </div>
+
+                  <!-- Restore Backup Row -->
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #161616; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center;"><i data-lucide="upload" style="width: 14px; height: 14px;"></i></div>
+                      <div style="text-align: left;">
+                        <h4 style="font-size: 11px; font-weight: 700; color: var(--text-primary); margin: 0;">Restore Backup</h4>
+                        <p style="font-size: 9px; color: var(--text-muted); margin: 2px 0 0 0;">Restore from database JSON file</p>
+                      </div>
+                    </div>
+                    <button class="primary-btn" id="backupImportBtn" type="button" style="background: var(--border-color); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 750; border-radius: 8px; height: 28px; font-size: 10px; padding: 0 12px;">Restore</button>
+                    <input type="file" id="backupFileInput" accept=".json" style="display: none;">
+                  </div>
+                </div>
+
+                <!-- Danger Zone Card -->
+                <div class="settings-card danger-zone" style="border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05); padding: 14px; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="text-align: left;">
+                      <h4 style="font-size: 11px; font-weight: 700; color: #f43f5e; margin: 0;">Danger Zone</h4>
+                      <p style="font-size: 9px; color: #a0a0a0; margin: 2px 0 0 0;">Delete all databases and clear local cache.</p>
+                    </div>
+                    <button class="primary-btn danger-btn" id="resetDataBtn" type="button" style="background: #f43f5e; color: #ffffff; border: none; font-weight: 750; border-radius: 8px; height: 28px; font-size: 10px; padding: 0 12px;">Wipe Data</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
@@ -1264,174 +1512,7 @@
   </aside>
 
 
-  <!-- =============================================================
-       PHASE 4: CONFIGURATION SETTINGS MODAL OVERLAY
-       ============================================================= -->
-  <div class="modal-overlay-backdrop" id="settingsModalOverlay">
-    <div class="settings-modal-card glass-panel select-none relative animate-fadeIn">
 
-      <!-- Top Close X Button -->
-      <button class="settings-close-x-btn" id="closeSettingsXBtn" type="button" aria-label="Close Settings">
-        <i data-lucide="x"></i>
-      </button>
-
-      <h3 class="settings-modal-title text-zinc-100">Montra Sandbox Settings</h3>
-      <p class="settings-modal-subtitle">Calibrate currency, occupation budgets, and database backups.</p>
-
-      <div class="settings-sections-container">
-
-        <!-- SECTION 1: PROFILE & CURRENCY -->
-        <fieldset class="settings-section">
-          <legend class="settings-section-legend">
-            <span class="section-num">1</span>
-            Profile & Currency
-          </legend>
-
-          <div class="mb-3" style="margin-bottom: 12px; text-align: left;">
-            <label class="input-label-tag" for="stUserName">Your Name</label>
-            <div class="st-input-wrapper" style="margin-bottom: 0;">
-              <i data-lucide="user" class="st-input-icon"></i>
-              <input class="st-input-box" id="stUserName" type="text" placeholder="Enter your name..."
-                style="padding-left: 42px; border-radius: 14px; font-size: 13px; height: 38px;">
-            </div>
-          </div>
-
-          <div class="settings-grid-cols-2">
-            <div>
-              <label class="input-label-tag" for="stCurrencySymbol">Default Currency</label>
-              <div class="st-input-wrapper">
-                <i data-lucide="globe" class="st-input-icon"></i>
-                <select class="st-input-box" id="stCurrencySymbol" style="cursor: pointer; padding-left: 42px;">
-                  <option value="₹">₹ INR (India)</option>
-                  <option value="$">$ USD (USA)</option>
-                  <option value="£">£ GBP (UK)</option>
-                  <option value="€">€ EUR (Europe)</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="input-label-tag" for="stOccupation">Occupation Profile</label>
-              <div class="st-input-wrapper">
-                <i data-lucide="user" class="st-input-icon"></i>
-                <select class="st-input-box" id="stOccupation" style="cursor: pointer; padding-left: 42px;">
-                  <option value="Student">Student (70% Cap)</option>
-                  <option value="Working">Earning (50% Cap)</option>
-                  <option value="Freelancer">Freelancer (60% Cap)</option>
-                  <option value="Other">Other (65% Cap)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-
-        <!-- SECTION 2: YNAB BUDGET ALLOWANCES -->
-        <fieldset class="settings-section">
-          <legend class="settings-section-legend">
-            <span class="section-num">2</span>
-            YNAB Budget Allowances
-          </legend>
-
-          <div class="mb-4">
-            <label class="input-label-tag" for="stIncomeVal">Modify Monthly Funds</label>
-            <div class="st-input-wrapper">
-              <i data-lucide="wallet" class="st-input-icon" id="stIncomeIcon"></i>
-              <input class="st-input-box" id="stIncomeVal" type="number" placeholder="Enter income...">
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <label class="input-label-tag" for="stInitialBalanceVal">Starting Balance</label>
-            <div class="st-input-wrapper">
-              <i data-lucide="piggy-bank" class="st-input-icon"></i>
-              <input class="st-input-box" id="stInitialBalanceVal" type="number" placeholder="Enter starting balance...">
-            </div>
-          </div>
-
-          <div class="settings-grid-cols-2">
-            <div>
-              <label class="input-label-tag" for="stBudgetType">Limit Period</label>
-              <div class="st-input-wrapper">
-                <i data-lucide="calendar" class="st-input-icon"></i>
-                <select class="st-input-box" id="stBudgetType" style="cursor: pointer; padding-left: 42px;">
-                  <option value="daily">Daily allowance</option>
-                  <option value="weekly">Weekly allowance</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="input-label-tag" for="stBudgetVal">Allowance Cap</label>
-              <div class="st-input-wrapper">
-                <i data-lucide="compass" class="st-input-icon"></i>
-                <input class="st-input-box" id="stBudgetVal" type="number" placeholder="Cap amount...">
-              </div>
-            </div>
-          </div>
-        </fieldset>
-
-        <!-- SECTION 3: BACKUPS & DATA CONTROL -->
-        <fieldset class="settings-section" style="margin-bottom: 0;">
-          <legend class="settings-section-legend">
-            <span class="section-num">3</span>
-            Backups & Data Control
-          </legend>
-
-          <div class="backup-cards-grid">
-            <!-- Card 1: Export -->
-            <div class="backup-card glass-panel" id="cardBackupExport">
-              <div class="backup-card-icon-wrapper export-color">
-                <i data-lucide="download"></i>
-              </div>
-              <div class="backup-card-details">
-                <h4 class="backup-card-title">Backup Data</h4>
-                <p class="backup-card-desc">Download your transactions and budgets as a backup file.</p>
-              </div>
-              <button class="backup-card-action-btn" id="backupExportBtn" type="button">
-                Save Backup
-              </button>
-            </div>
-
-            <!-- Card 2: Import -->
-            <div class="backup-card glass-panel" id="cardBackupImport">
-              <div class="backup-card-icon-wrapper import-color">
-                <i data-lucide="upload"></i>
-              </div>
-              <div class="backup-card-details">
-                <h4 class="backup-card-title">Restore Backup</h4>
-                <p class="backup-card-desc">Restore your transactions and budgets from a saved file.</p>
-              </div>
-              <button class="backup-card-action-btn" id="backupImportBtn" type="button">
-                Load Backup
-              </button>
-              <input type="file" id="backupFileInput" accept=".json" style="display: none;">
-            </div>
-
-            <!-- Card 3: Reset -->
-            <div class="backup-card glass-panel danger-card" id="cardResetData">
-              <div class="backup-card-icon-wrapper reset-color">
-                <i data-lucide="trash-2"></i>
-              </div>
-              <div class="backup-card-details">
-                <h4 class="backup-card-title text-rose-500">Wipe All Data</h4>
-                <p class="backup-card-desc">Delete all transactions, settings, and start fresh.</p>
-              </div>
-              <button class="backup-card-action-btn danger-btn" id="resetDataBtn" type="button">
-                Reset All
-              </button>
-            </div>
-          </div>
-        </fieldset>
-
-      </div>
-
-      <div class="btn-group" style="margin-top: 24px;">
-        <button class="secondary-btn" id="closeSettingsBtn" type="button"
-          style="flex: 1; border-radius: 14px; padding: 12px;">Cancel</button>
-        <button class="primary-btn" id="saveSettingsBtn" type="button"
-          style="flex: 1; border-radius: 14px; padding: 12px;">Save Changes</button>
-      </div>
-    </div>
-  </div>
 
   <!-- =============================================================
        PHASE 6: LOGOUT CONFIRMATION MODAL OVERLAY
